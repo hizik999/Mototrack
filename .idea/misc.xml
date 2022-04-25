@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable/circle_icon_account.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable/ic_baseline_mic_24.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable/ic_baseline_notifications_active_24.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable/ic_baseline_notifications_off_24.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable/ic_baseline_volume_off_24.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable/ic_baseline_volume_up_24.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable/ic_car.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable/ic_map.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable/ic_moped.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable/ic_red_moped.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable/ic_settings.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable/layout_round_button.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable/layout_round_corners.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/drawable/round_corners_account_icon.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/activity_help.xml" value="0.5366847826086957" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/activity_main.xml" value="0.5533980582524272" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/activity_map.xml" value="0.55" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/delete.xml" value="0.5" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/fragment_account.xml" value="0.5217391304347826" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/fragment_fake_moped.xml" value="0.5" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/fragment_g_p_sfragment.xml" value="0.490625" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/fragment_map.xml" value="0.5" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/fragment_maps.xml" value="0.33" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/fragment_maps2.xml" value="0.29583333333333334" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/fragment_moped.xml" value="0.67" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/fragment_second_map.xml" value="0.5401041666666667" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/fragment_settings.xml" value="0.33" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/fragment_settings2.xml" value="0.33" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/fragment_settings3.xml" value="0.55" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/layout/item_moto.xml" value="0.67" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/andry/AndroidStudioProjects/project_map_curr_location/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.5661458333333333" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
