@@ -162,7 +162,7 @@ public class SettingsFragment extends Fragment {
                     ((MainActivity) context).saveDataBoolean("show_moto", false);
                 }
 
-                ((MainActivity) context).playSound();
+                ((MainActivity) context).playSoundStart();
 
             }
         });

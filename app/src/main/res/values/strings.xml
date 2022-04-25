@@ -38,7 +38,8 @@
     <string name="notification_status">notification_status</string>
     <string name="show_moto">show_moto</string>
     <string name="voiceOn">voiceOn</string>
-
+    <string name="tripStatus">tripStatus</string>
+    <string name="cancelTrip">Отменить маршрут?</string>
 
 
 </resources>

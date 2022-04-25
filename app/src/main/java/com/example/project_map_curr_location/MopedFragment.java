@@ -39,7 +39,7 @@ public class MopedFragment extends Fragment {
         context = view.getContext();
         tv_motos = view.findViewById(R.id.tv_motos);
         if (((MainActivity) context).loadDataInt(getString(R.string.car_or_moto)) == 1) {
-            tv_motos.setText("Не понял");
+            tv_motos.setText("Ты волшебник или как?");
         } else {
             rvMotos.setLayoutManager(new LinearLayoutManager(getContext()));
             setMotorcycleArrayList();

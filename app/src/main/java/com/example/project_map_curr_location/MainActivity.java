@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -103,18 +104,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void speak() {
         //РУССКИЙ НЕ РАБОТАЕТ
-        Locale russain = new Locale("RU");
+        Locale russian = new Locale("RU");
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
-                russain);
+                russian);
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Куда Вам надо?");
 
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
         } catch (Exception e){
-
+            Toast.makeText(getApplicationContext(), "а?шо?", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -139,8 +140,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void playSound() {
-        sound = MediaPlayer.create(this, R.raw.bell);
+    public void playSoundStart() {
+        sound = MediaPlayer.create(this, R.raw.start);
+        if (sound.isPlaying()) {
+            sound.stop();
+        }
+        sound.setLooping(false);
+        sound.start();
+    }
+
+    public void playSoundEnd() {
+        sound = MediaPlayer.create(this, R.raw.back);
         if (sound.isPlaying()) {
             sound.stop();
         }
