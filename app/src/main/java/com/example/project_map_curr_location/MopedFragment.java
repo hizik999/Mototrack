@@ -58,6 +58,7 @@ public class MopedFragment extends Fragment {
     private void setMotorcycleArrayList() {
         motorcycleArrayList = new ArrayList<>();
 
+        //motorcycleArrayList.add(new Motorcycle(0,120, 55.6692280, 37.2849931, 0, "Andy"));
         motorcycleArrayList.add(new Motorcycle(0, 120, 37.2849947, 55.6692509, 0, "Andy"));
         motorcycleArrayList.add(new Motorcycle(1, 100, 55.6692569, 37.2849319, 0, "Senya"));
         motorcycleArrayList.add(new Motorcycle(2, 80, 55.6692579, 37.2849319, 0, "Denis"));

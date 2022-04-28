@@ -60,7 +60,7 @@ public class SettingsFragment3 extends Fragment {
         btnCar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) context).saveDataInt(getString(R.string.car_or_moto), 0);
+
                 if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
                     btn_startTrip.setText(getText(R.string.startTripSuccess));
                 }
@@ -71,7 +71,7 @@ public class SettingsFragment3 extends Fragment {
         btnMoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) context).saveDataInt(getString(R.string.car_or_moto), 1);
+
                 if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
                     btn_startTrip.setText(getText(R.string.startTripSuccess));
                 }
@@ -81,7 +81,7 @@ public class SettingsFragment3 extends Fragment {
         btnVoiceOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) context).saveDataBoolean(getString(R.string.voiceOn), true);
+
                 if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
                     btn_startTrip.setText(getText(R.string.startTripSuccess));
                 }
@@ -91,7 +91,7 @@ public class SettingsFragment3 extends Fragment {
         btnVoiceOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) context).saveDataBoolean(getString(R.string.voiceOn), false);
+
                 if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
                     btn_startTrip.setText(getText(R.string.startTripSuccess));
                 }
@@ -101,7 +101,7 @@ public class SettingsFragment3 extends Fragment {
         btnNotificationOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) context).saveDataBoolean(getString(R.string.notification_status), true);
+
                 if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
                     btn_startTrip.setText(getText(R.string.startTripSuccess));
                 }
@@ -111,7 +111,7 @@ public class SettingsFragment3 extends Fragment {
         btnNotificationOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) context).saveDataBoolean(getString(R.string.notification_status), false);
+
                 if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
                     btn_startTrip.setText(getText(R.string.startTripSuccess));
                 }
@@ -127,20 +127,34 @@ public class SettingsFragment3 extends Fragment {
                     btn_startTrip.setText(getText(R.string.startTripSuccess));
                     ((MainActivity) context).cancelNotification(notificationManager, 1);
                     ((MainActivity) context).playSoundEnd();
+                    ((MainActivity) context).saveDataInt(getString(R.string.car_or_moto), 1);
 
                 } else {
                     if ((btnCar.isSelected() || btnMoto.isSelected())
                             && (btnVoiceOn.isSelected() || btnVoiceOff.isSelected())
                             && (btnNotificationOn.isSelected() || btnNotificationOff.isSelected())) {
 
-                        if (btnNotificationOff.isSelected()) {
-                            ((MainActivity) context).cancelNotification(notificationManager, 1);
-                        } else {
-                            ((MainActivity) context).sendNotificationStatus();
+                        if (btnCar.isSelected()){
+                            ((MainActivity) context).saveDataInt(getString(R.string.car_or_moto), 0);
+                        }
+
+                        if (btnMoto.isSelected()){
+                            ((MainActivity) context).saveDataInt(getString(R.string.car_or_moto), 1);
                         }
 
                         if (btnVoiceOn.isSelected()){
+                            ((MainActivity) context).saveDataBoolean(getString(R.string.voiceOn), true);
                             ((MainActivity) context).playSoundStart();
+                        } else {
+                            ((MainActivity) context).saveDataBoolean(getString(R.string.voiceOn), false);
+                        }
+
+                        if (btnNotificationOff.isSelected()) {
+                            ((MainActivity) context).saveDataBoolean(getString(R.string.notification_status), false);
+                            ((MainActivity) context).cancelNotification(notificationManager, 1);
+                        } else {
+                            ((MainActivity) context).saveDataBoolean(getString(R.string.notification_status), true);
+                            ((MainActivity) context).sendNotificationStatus();
                         }
 
                         ((MainActivity) context).loadMapForTrip();

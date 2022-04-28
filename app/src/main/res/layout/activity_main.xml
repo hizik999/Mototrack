@@ -42,7 +42,7 @@
                     android:layout_weight="1"
                     android:src="@drawable/ic_baseline_account_circle_24"
                     android:layout_gravity="center"
-                    android:backgroundTint="@color/dark_blue"
+                    android:backgroundTint="@color/color3"
                     />
 
                 <androidx.appcompat.widget.AppCompatEditText
@@ -63,7 +63,7 @@
                     android:layout_weight="1"
                     android:src="@drawable/ic_baseline_mic_24"
                     android:layout_gravity="center"
-                    android:backgroundTint="@color/dark_blue"
+                    android:backgroundTint="@color/color3"
                     />
 
 
@@ -77,13 +77,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:mbn_backgroundBottomColor="@color/dark_blue"
+            app:mbn_backgroundBottomColor="@color/color3"
             app:mbn_circleColor="@color/white"
             app:mbn_countBackgroundColor="@color/grey"
             app:mbn_countTextColor="@color/white"
             app:mbn_defaultIconColor="@color/white"
             app:mbn_rippleColor="@color/purple_200"
-            app:mbn_selectedIconColor="@color/dark_blue"
+            app:mbn_selectedIconColor="@color/color3"
             app:mbn_shadowColor="@color/grey" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

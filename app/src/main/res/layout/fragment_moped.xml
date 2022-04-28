@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/light_black"
+    android:background="@color/color4"
     android:paddingTop="35dp"
     android:paddingBottom="50dp"
     android:paddingLeft="5dp"
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:textSize="25sp"
+        android:textSize="30sp"
         android:layout_weight="1"
         android:gravity="center"
         android:layout_gravity="center"
@@ -34,7 +34,7 @@
         android:id="@+id/delimeter_view"
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="@color/dark_blue"
+        android:background="@color/color3"
         android:layout_gravity="bottom" />
 
     <LinearLayout

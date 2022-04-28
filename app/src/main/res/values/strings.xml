@@ -2,6 +2,9 @@
     <string name="app_name">MotoTrack</string>
     <string name="google_map_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCew_k8kTuVRNOthVbBtMGyLh-Wj3Qjsp0</string>
     <string name="google_map_key2" templateMergeStrategy="preserve" translatable="false">AIzaSyA_VIxhnQsBoQKiaNpXsP0Kld9FwaURdq0</string>
+
+    <string name="mapbox_access_token">pk.eyJ1IjoiaGl6aWs5OTkiLCJhIjoiY2wyZ2RoZnk5MDJ6YjNqcWhmNTB3ajlhdSJ9.prabf6dQd1Zw5KkwtEgssw</string>
+
     <string name="btn_find_location"> Где я?</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="provider_gps">Местоположение по GPS</string>
@@ -30,6 +33,7 @@
     <string name="fakeMotos">Вы не автомобилист.</string>
     <string name="fakeMotosDesc">Чтобы увидеть список ближайших мотоциклов, Вам нужно выбрать режим водителя автомобиля и построить маршрут.</string>
     <string name="goToSettings">Перейти в настройки</string>
+
 
 
 
