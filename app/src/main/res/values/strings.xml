@@ -35,8 +35,6 @@
     <string name="goToSettings">Перейти в настройки</string>
 
 
-
-
     <!--Keys for SharedPrefs-->
     <string name="car_or_moto">car_or_moto</string>
     <string name="notification_status">notification_status</string>

@@ -65,7 +65,17 @@ public class MainActivity extends AppCompatActivity {
         setMotorcycleArrayList();
         setBottomNavigation();
         RVMotosAdapter rvMotosAdapter = new RVMotosAdapter(this);
+        micAndLogin();
 
+
+
+
+
+
+
+    }
+
+    private void micAndLogin(){
         et_FindLocation = findViewById(R.id.et_FindLocation);
         btn_findLocationMicro = findViewById(R.id.btn_findLocationMicro);
 
@@ -93,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     @Override
