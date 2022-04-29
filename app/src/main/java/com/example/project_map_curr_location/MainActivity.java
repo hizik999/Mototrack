@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
+import com.mapbox.mapboxsdk.maps.MapView;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -57,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int request_Code = 101;
 
     private ArrayList<Motorcycle> motorcycleArrayList;
+
+
+    private MapView mapView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,7 +219,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void setBottomNavigation() {
 //        fragment_map = new MapsFragment2(motorcycleArrayList);
-        fragment_map = new MapsFragment2(motorcycleArrayList);
+        //fragment_map = new MapsFragment2(motorcycleArrayList);
+        fragment_map = new YandexMapFragment();
         fragment_settings = new SettingsFragment3();
         fragment_moped = new MopedFragment();
         fragment_fake_moped = new FakeMopedFragment();
