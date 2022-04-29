@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         RVMotosAdapter rvMotosAdapter = new RVMotosAdapter(this);
         micAndLogin();
 
-
+        et_FindLocation = findViewById(R.id.et_FindLocation);
 
 
 
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
     public void setBottomNavigation() {
 //        fragment_map = new MapsFragment2(motorcycleArrayList);
         //fragment_map = new MapsFragment2(motorcycleArrayList);
-        fragment_map = new YandexMapFragment();
+        fragment_map = new YandexMapFragment(motorcycleArrayList);
         fragment_settings = new SettingsFragment3();
         fragment_moped = new MopedFragment();
         fragment_fake_moped = new FakeMopedFragment();
@@ -351,89 +351,16 @@ public class MainActivity extends AppCompatActivity {
         return value;
     }
 
+    public double saveDataFloat(String key, float value){
+        sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putFloat(key, value);
+        return value;
+    }
 
-//    public static GeoPoint getGeoPointFromAddress(String locationAddress) {
-//        GeoPoint locationPoint = null;
-//        String locationAddres = locationAddress.replaceAll(" ", "%20");
-//        String str = "http://maps.googleapis.com/maps/api/geocode/json?address="
-//                + locationAddres + "&sensor=true";
-//
-//        String ss = readWebService(str);
-//        JSONObject json;
-//        try {
-//
-//            String lat, lon;
-//            json = new JSONObject(ss);
-//            JSONObject geoMetryObject = new JSONObject();
-//            JSONObject locations = new JSONObject();
-//            JSONArray jarr = json.getJSONArray("results");
-//            int i;
-//            for (i = 0; i < jarr.length(); i++) {
-//                json = jarr.getJSONObject(i);
-//                geoMetryObject = json.getJSONObject("geometry");
-//                locations = geoMetryObject.getJSONObject("location");
-//                lat = locations.getString("lat");
-//                lon = locations.getString("lng");
-//
-//                locationPoint = Utils.getGeoPoint(Double.parseDouble(lat),
-//                        Double.parseDouble(lon));
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return locationPoint;
-//    }
-//
-//    public static Map<String, String> getLatitudeLongitudeByAddress(String completeAddress) {
-//        try {
-//            String surl = "https://maps.googleapis.com/maps/api/geocode/json?address="+ URLEncoder.encode(completeAddress, "UTF-8")+"&key="+"AIzaSyCew_k8kTuVRNOthVbBtMGyLh-Wj3Qjsp0";
-//            URL url = new URL(surl);
-//            InputStream is = url.openConnection().getInputStream();
-//
-//            BufferedReader streamReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-//            StringBuilder responseStrBuilder = new StringBuilder();
-//
-//            String inputStr;
-//            while ((inputStr = streamReader.readLine()) != null)
-//                responseStrBuilder.append(inputStr);
-//
-//            JSONObject jo = new JSONObject(responseStrBuilder.toString());
-//            JSONArray results = jo.getJSONArray("results");
-//            String lat = null;
-//            String lng = null;
-//            String region = null;
-//            String province = null;
-//            String zip = null;
-//            Map<String, String> ret = new HashMap<String, String>();
-//            if(results.length() > 0) {
-//                JSONObject jsonObject;
-//                jsonObject = results.getJSONObject(0);
-//                ret.put("lat", jsonObject.getJSONObject("geometry").getJSONObject("location").getString("lat"));
-//                ret.put("lng", jsonObject.getJSONObject("geometry").getJSONObject("location").getString("lng"));
-//
-//                JSONArray ja = jsonObject.getJSONArray("address_components");
-//                for(int l=0; l<ja.length(); l++) {
-//                    JSONObject curjo = ja.getJSONObject(l);
-//                    String type = curjo.getJSONArray("types").getString(0);
-//                    String short_name = curjo.getString("short_name");
-//                    if(type.equals("postal_code")) {
-//                        ret.put("zip", short_name);
-//                    }
-//                    else if(type.equals("administrative_area_level_3")) {
-//                        ret.put("city", short_name);
-//                    }
-//                    else if(type.equals("administrative_area_level_2")) {
-//                        ret.put("province", short_name);
-//                    }
-//                    else if(type.equals("administrative_area_level_1")) {
-//                        ret.put("region", short_name);
-//                    }
-//                }
-//                return ret;
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
+    public int loadDataFloat(String key) {
+        sharedPreferences = getPreferences(MODE_PRIVATE);
+        int value = sharedPreferences.getInt(key, 0);
+        return value;
+    }
 }

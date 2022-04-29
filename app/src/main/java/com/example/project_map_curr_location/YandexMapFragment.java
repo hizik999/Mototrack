@@ -1,15 +1,21 @@
 package com.example.project_map_curr_location;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.yandex.mapkit.GeoObjectCollection;
+import com.yandex.mapkit.MapKit;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.RequestPoint;
 import com.yandex.mapkit.RequestPointType;
@@ -20,10 +26,26 @@ import com.yandex.mapkit.directions.driving.DrivingRouter;
 import com.yandex.mapkit.directions.driving.DrivingSession;
 import com.yandex.mapkit.directions.driving.VehicleOptions;
 import com.yandex.mapkit.geometry.Point;
-import com.yandex.mapkit.map.CameraPosition;
+import com.yandex.mapkit.layers.ObjectEvent;
+import com.yandex.mapkit.map.CompositeIcon;
+import com.yandex.mapkit.map.IconStyle;
 import com.yandex.mapkit.map.MapObjectCollection;
+import com.yandex.mapkit.map.PlacemarkMapObject;
+import com.yandex.mapkit.map.RotationType;
+import com.yandex.mapkit.map.VisibleRegionUtils;
 import com.yandex.mapkit.mapview.MapView;
+import com.yandex.mapkit.search.Response;
+import com.yandex.mapkit.search.SearchFactory;
+import com.yandex.mapkit.search.SearchManager;
+import com.yandex.mapkit.search.SearchManagerType;
+import com.yandex.mapkit.search.SearchOptions;
+import com.yandex.mapkit.search.Session;
+import com.yandex.mapkit.traffic.TrafficLayer;
+import com.yandex.mapkit.user_location.UserLocationLayer;
+import com.yandex.mapkit.user_location.UserLocationObjectListener;
+import com.yandex.mapkit.user_location.UserLocationView;
 import com.yandex.runtime.Error;
+import com.yandex.runtime.image.ImageProvider;
 import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
@@ -32,28 +54,49 @@ import java.util.List;
 
 public class YandexMapFragment extends Fragment {
 
+    private final ArrayList<Motorcycle> motorcycleList;
+
     private MapView mapView;
 
-    private final String MAPKIT_API_KEY = "89dd61c6-b084-4e39-b9ba-d61687c8bee4";
-    private final Point ROUTE_START_LOCATION = new Point(55.6692509, 37.2849947);
-    private final Point ROUTE_END_LOCATION = new Point(55.733330, 37.587649);
-    private final Point SCREEN_CENTER = new Point(
-            (ROUTE_START_LOCATION.getLatitude() + ROUTE_END_LOCATION.getLatitude()) / 2,
-            (ROUTE_START_LOCATION.getLongitude() + ROUTE_END_LOCATION.getLongitude()) / 2);
+    private Point start = new Point();
+    private Point end = new Point();
+    private Point actualPosition = new Point();
 
-    //    private MapView mapView;
     private MapObjectCollection mapObjects;
     private DrivingRouter drivingRouter;
     private DrivingSession drivingSession;
 
+    private UserLocationLayer userLocationLayer;
+
+    private Context context;
+
+    private TrafficLayer traffic;
+
+    private EditText searchEdit;
+    private SearchManager searchManager;
+    private Session searchSession;
+
+//    private TrafficLevel trafficLevel = null;
+//    private enum TrafficFreshness {Loading, OK, Expired};
+//    private TrafficFreshness trafficFreshness;
+//    private Point start = new Point(55.6692509, 37.2849947);
+//    private Point end = new Point(55.733330, 37.587649);
+
+//    private Point screen_center = new Point(
+//            (start.getLatitude() + end.getLatitude()) / 2,
+//            (start.getLongitude() + end.getLongitude()) / 2);
+
+    public YandexMapFragment(ArrayList<Motorcycle> motorcycleList) {
+        this.motorcycleList = motorcycleList;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
-        MapKitFactory.setApiKey("89dd61c6-b084-4e39-b9ba-d61687c8bee4");
+        MapKitFactory.setApiKey(getString(R.string.yandex_api));
         MapKitFactory.initialize(getContext());
+        SearchFactory.initialize(getContext());
         super.onCreate(savedInstanceState);
-
-
+        context = getContext();
     }
 
     @Override
@@ -67,18 +110,68 @@ public class YandexMapFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         super.onViewCreated(view, savedInstanceState);
+
         mapView = view.findViewById(R.id.mapView);
-        mapView.getMap().move(new CameraPosition(ROUTE_START_LOCATION, 16, 0, 0));
+
+
+        searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED);
+
+//        float lat = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat));
+//        float lon = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon));
+//        actualPosition = new Point((double) lat, (double) lon);
+//
+//        mapView.getMap().move(new CameraPosition(actualPosition, 1, 0, 0));
         drivingRouter = DirectionsFactory.getInstance().createDrivingRouter();
         mapObjects = mapView.getMap().getMapObjects().addCollection();
-        submitRequest();
+
+        searchEdit = view.findViewById(R.id.et_FindLocation);
+
+//        searchEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+//                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+//                    submitQuery(searchEdit.getText().toString());
+//                }
+//
+//                return false;
+//            }
+//        });
+
+        traffic = MapKitFactory.getInstance().createTrafficLayer(mapView.getMapWindow());
+        traffic.setTrafficVisible(true);
+
+
+
+        userLocation();
+        if (((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
+            Point startLoc = new Point(55.733330, 37.587649);
+            Point destLoc = new Point(55.6692509, 37.2849947);
+
+            submitRequest(startLoc, destLoc);
+        }
+
     }
 
+    @Override
+    public void onPause() {
+        mapView.onStop();
+        MapKitFactory.getInstance().onStop();
+        Toast.makeText(context, "OnPause", Toast.LENGTH_SHORT).show();
 
+//        ScreenPoint screenPoint = mapView.getFocusPoint();
+//        float x = screenPoint.getX();
+//        float y = screenPoint.getY();
+
+//        ((MainActivity) context).saveDataFloat(getString(R.string.actualCameraPositionLon), x);
+//        ((MainActivity) context).saveDataFloat(getString(R.string.actualCameraPositionLat), y);
+        super.onPause();
+    }
+//search, suggest, jams
     @Override
     public void onStop() {
         mapView.onStop();
         MapKitFactory.getInstance().onStop();
+        Toast.makeText(context, "OnStop", Toast.LENGTH_SHORT).show();
         super.onStop();
 
     }
@@ -88,19 +181,20 @@ public class YandexMapFragment extends Fragment {
         // Activity onStart call must be passed to both MapView and MapKit instance.
         super.onStart();
         MapKitFactory.getInstance().onStart();
+        Toast.makeText(context, "OnStart", Toast.LENGTH_SHORT).show();
         mapView.onStart();
     }
 
-    private void submitRequest() {
+    private void submitRequest(Point tripStart, Point tripEnd) {
         DrivingOptions drivingOptions = new DrivingOptions();
         VehicleOptions vehicleOptions = new VehicleOptions();
         ArrayList<RequestPoint> requestPoints = new ArrayList<>();
         requestPoints.add(new RequestPoint(
-                ROUTE_START_LOCATION,
+                tripStart,
                 RequestPointType.WAYPOINT,
                 null));
         requestPoints.add(new RequestPoint(
-                ROUTE_END_LOCATION,
+                tripEnd,
                 RequestPointType.WAYPOINT,
                 null));
         DrivingSession.DrivingRouteListener drivingRouteListener = new DrivingSession.DrivingRouteListener() {
@@ -130,6 +224,104 @@ public class YandexMapFragment extends Fragment {
         };
         drivingSession = drivingRouter.requestRoutes(requestPoints, drivingOptions, vehicleOptions, drivingRouteListener);
     }
+
+    private void userLocation(){
+        MapKit mapKit = MapKitFactory.getInstance();
+        userLocationLayer = mapKit.createUserLocationLayer(mapView.getMapWindow());
+        userLocationLayer.setVisible(true);
+        userLocationLayer.setHeadingEnabled(true);
+
+        UserLocationObjectListener listener = new UserLocationObjectListener() {
+            @Override
+            public void onObjectAdded(@NonNull UserLocationView userLocationView) {
+                userLocationLayer.setAnchor(
+                        new PointF((float)(mapView.getWidth() * 0.5), (float)(mapView.getHeight() * 0.5)),
+                        new PointF((float)(mapView.getWidth() * 0.5), (float)(mapView.getHeight() * 0.83)));
+
+
+
+                PlacemarkMapObject x = userLocationView.getArrow();
+                Point userLoc = x.getGeometry();
+
+
+
+//                if (((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
+//                    submitRequest(userLoc, destLoc);
+//                }
+
+                userLocationView.getArrow().setIcon(ImageProvider.fromResource(
+                        context, R.drawable.user_arrow));
+                CompositeIcon pinIcon = userLocationView.getPin().useCompositeIcon();
+
+//                pinIcon.setIcon(
+//                        "icon",
+//                        ImageProvider.fromResource(context, R.drawable.icon),
+//                        new IconStyle().setAnchor(new PointF(0f, 0f))
+//                                .setRotationType(RotationType.ROTATE)
+//                                .setZIndex(0f)
+//                                .setScale(1f)
+//                );
+
+                pinIcon.setIcon(
+                        "pin",
+                        ImageProvider.fromResource(context, R.drawable.search_result),
+                        new IconStyle().setAnchor(new PointF(0.5f, 0.5f))
+                                .setRotationType(RotationType.ROTATE)
+                                .setZIndex(1f)
+                                .setScale(0.5f)
+                );
+
+                userLocationView.getAccuracyCircle().setFillColor(Color.BLUE & 0x99ffffff);
+            }
+
+            @Override
+            public void onObjectRemoved(@NonNull UserLocationView userLocationView) {
+
+            }
+
+            @Override
+            public void onObjectUpdated(@NonNull UserLocationView userLocationView, @NonNull ObjectEvent objectEvent) {
+
+            }
+        };
+
+        userLocationLayer.setObjectListener(listener);
+    }
+
+
+
+    private void submitQuery(String query) {
+        Session.SearchListener searchListener = new Session.SearchListener() {
+            @Override
+            public void onSearchResponse(@NonNull Response response) {
+                MapObjectCollection mapObjects = mapView.getMap().getMapObjects();
+                mapObjects.clear();
+
+                for (GeoObjectCollection.Item searchResult : response.getCollection().getChildren()) {
+                    Point resultLocation = searchResult.getObj().getGeometry().get(0).getPoint();
+                    if (resultLocation != null) {
+                        mapObjects.addPlacemark(
+                                resultLocation,
+                                ImageProvider.fromResource(context, R.drawable.search_result));
+                    }
+                }
+            }
+
+            @Override
+            public void onSearchError(@NonNull Error error) {
+                String errorMessage = "ну ты и балда";
+                if (error instanceof RemoteError) {
+                    errorMessage = "ну ты и балда";
+                } else if (error instanceof NetworkError) {
+                    errorMessage = "ну ты и балда";
+                }
+
+                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        };
+        searchSession = searchManager.submit(query, VisibleRegionUtils.toPolygon(mapView.getMap().getVisibleRegion()), new SearchOptions(), searchListener);
+    }
+
 
 
 }

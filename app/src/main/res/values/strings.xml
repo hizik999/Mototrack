@@ -44,6 +44,8 @@
     <string name="voiceOn">voiceOn</string>
     <string name="tripStatus">tripStatus</string>
     <string name="cancelTrip">Отменить маршрут?</string>
-
+    <string name="actualCameraPositionLat">actualCameraPositionLat</string>
+    <string name="actualCameraPositionLon">actualCameraPositionLon</string>
+    <string name="tripEnd">tripEnd</string>
 
 </resources>
