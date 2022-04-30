@@ -128,6 +128,7 @@ public class SettingsFragment3 extends Fragment {
                     ((MainActivity) context).cancelNotification(notificationManager, 1);
                     ((MainActivity) context).playSoundEnd();
                     ((MainActivity) context).saveDataInt(getString(R.string.car_or_moto), 1);
+                    //((MainActivity) context).loadMapForTrip();
 
                 } else {
                     if ((btnCar.isSelected() || btnMoto.isSelected())

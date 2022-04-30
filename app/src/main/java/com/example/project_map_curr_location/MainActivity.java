@@ -153,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String res = result.get(0);
                     et_FindLocation.setText((CharSequence) res);
+                    //Toast.makeText(getApplicationContext(), "ЗАСЕЙВИЛ" + res, Toast.LENGTH_SHORT).show();
                     saveDataString(getString(R.string.findLocationEditText), String.valueOf(res));
                 }
                 break;
@@ -187,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadMapForTrip() {
+        curr_fragment = fragment_map;
         fm.beginTransaction().replace(R.id.frame_layout, curr_fragment).addToBackStack(null).commit();
         bottomNavigation.show(2, true);
     }
