@@ -9,7 +9,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -73,7 +75,16 @@ public class MainActivity extends AppCompatActivity {
 
         et_FindLocation = findViewById(R.id.et_FindLocation);
 
+        et_FindLocation.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                //Toast.makeText(getApplicationContext(), "ААААА" + et_FindLocation.getText(), Toast.LENGTH_SHORT).show();
+                saveDataString(getString(R.string.findLocationEditText), String.valueOf(et_FindLocation.getText()));
+                return false;
+            }
 
+
+        });
 
 
 
@@ -142,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String res = result.get(0);
                     et_FindLocation.setText((CharSequence) res);
-                    
+                    saveDataString(getString(R.string.findLocationEditText), String.valueOf(res));
                 }
                 break;
         }
@@ -351,16 +362,29 @@ public class MainActivity extends AppCompatActivity {
         return value;
     }
 
-    public double saveDataFloat(String key, float value){
+    public void saveDataFloat(String key, float value){
         sharedPreferences = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putFloat(key, value);
+        editor.apply();
+    }
+
+    public float loadDataFloat(String key) {
+        sharedPreferences = getPreferences(MODE_PRIVATE);
+        float value = sharedPreferences.getFloat(key, 0);
         return value;
     }
 
-    public int loadDataFloat(String key) {
+    public void saveDataString(String key, String value){
         sharedPreferences = getPreferences(MODE_PRIVATE);
-        int value = sharedPreferences.getInt(key, 0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
+
+    public String loadDataString(String key) {
+        sharedPreferences = getPreferences(MODE_PRIVATE);
+        String value = sharedPreferences.getString(key, "");
         return value;
     }
 }

@@ -27,8 +27,12 @@ import com.yandex.mapkit.directions.driving.DrivingSession;
 import com.yandex.mapkit.directions.driving.VehicleOptions;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.layers.ObjectEvent;
+import com.yandex.mapkit.map.CameraListener;
+import com.yandex.mapkit.map.CameraPosition;
+import com.yandex.mapkit.map.CameraUpdateReason;
 import com.yandex.mapkit.map.CompositeIcon;
 import com.yandex.mapkit.map.IconStyle;
+import com.yandex.mapkit.map.Map;
 import com.yandex.mapkit.map.MapObjectCollection;
 import com.yandex.mapkit.map.PlacemarkMapObject;
 import com.yandex.mapkit.map.RotationType;
@@ -52,7 +56,7 @@ import com.yandex.runtime.network.RemoteError;
 import java.util.ArrayList;
 import java.util.List;
 
-public class YandexMapFragment extends Fragment {
+public class YandexMapFragment extends Fragment implements Session.SearchListener, CameraListener {
 
     private final ArrayList<Motorcycle> motorcycleList;
 
@@ -124,8 +128,6 @@ public class YandexMapFragment extends Fragment {
         drivingRouter = DirectionsFactory.getInstance().createDrivingRouter();
         mapObjects = mapView.getMap().getMapObjects().addCollection();
 
-        searchEdit = view.findViewById(R.id.et_FindLocation);
-
 //        searchEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 //            @Override
 //            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -138,14 +140,32 @@ public class YandexMapFragment extends Fragment {
 //        });
 
         traffic = MapKitFactory.getInstance().createTrafficLayer(mapView.getMapWindow());
-        traffic.setTrafficVisible(true);
+        traffic.setTrafficVisible(false);
 
+        String text = ((MainActivity) context).loadDataString(getString(R.string.findLocationEditText));
 
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
 
-        userLocation();
+        if (!text.equals("")){
+            //Toast.makeText(context, "я все понял ура ура", Toast.LENGTH_SHORT).show();
+//            onViewCreated(view, savedInstanceState);
+            submitQuery(text);
+            ((MainActivity) context).saveDataString(getString(R.string.findLocationEditText), "");
+        }
+
+//        if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
+//            Toast.makeText(context, "нууу и кого мы ждем?", Toast.LENGTH_SHORT).show();
+//            submitQuery("кафе");
+//        }
+
+        //userLocation();
         if (((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
+//            Point startLoc = new Point(55.733330, 37.587649);
+//            Point destLoc = new Point(55.6692509, 37.2849947);
+
             Point startLoc = new Point(55.733330, 37.587649);
-            Point destLoc = new Point(55.6692509, 37.2849947);
+            Point destLoc = new Point(((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat)), ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon)));
+            traffic.setTrafficVisible(true);
 
             submitRequest(startLoc, destLoc);
         }
@@ -156,7 +176,8 @@ public class YandexMapFragment extends Fragment {
     public void onPause() {
         mapView.onStop();
         MapKitFactory.getInstance().onStop();
-        Toast.makeText(context, "OnPause", Toast.LENGTH_SHORT).show();
+//        mapObjects.clear();
+        //Toast.makeText(context, "OnPause", Toast.LENGTH_SHORT).show();
 
 //        ScreenPoint screenPoint = mapView.getFocusPoint();
 //        float x = screenPoint.getX();
@@ -170,8 +191,9 @@ public class YandexMapFragment extends Fragment {
     @Override
     public void onStop() {
         mapView.onStop();
+//        mapObjects.clear();
         MapKitFactory.getInstance().onStop();
-        Toast.makeText(context, "OnStop", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "OnStop", Toast.LENGTH_SHORT).show();
         super.onStop();
 
     }
@@ -181,11 +203,14 @@ public class YandexMapFragment extends Fragment {
         // Activity onStart call must be passed to both MapView and MapKit instance.
         super.onStart();
         MapKitFactory.getInstance().onStart();
-        Toast.makeText(context, "OnStart", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "OnStart", Toast.LENGTH_SHORT).show();
         mapView.onStart();
     }
 
     private void submitRequest(Point tripStart, Point tripEnd) {
+
+        mapObjects.clear();
+
         DrivingOptions drivingOptions = new DrivingOptions();
         VehicleOptions vehicleOptions = new VehicleOptions();
         ArrayList<RequestPoint> requestPoints = new ArrayList<>();
@@ -200,8 +225,10 @@ public class YandexMapFragment extends Fragment {
         DrivingSession.DrivingRouteListener drivingRouteListener = new DrivingSession.DrivingRouteListener() {
             @Override
             public void onDrivingRoutes(@NonNull List<DrivingRoute> list) {
+                mapObjects.clear();
                 int i = 0;
                 for (DrivingRoute route : list) {
+
                     mapObjects.addPolyline(route.getGeometry());
                     i++;
                     if (i == 1){
@@ -291,37 +318,69 @@ public class YandexMapFragment extends Fragment {
 
 
     private void submitQuery(String query) {
-        Session.SearchListener searchListener = new Session.SearchListener() {
-            @Override
-            public void onSearchResponse(@NonNull Response response) {
-                MapObjectCollection mapObjects = mapView.getMap().getMapObjects();
-                mapObjects.clear();
-
-                for (GeoObjectCollection.Item searchResult : response.getCollection().getChildren()) {
-                    Point resultLocation = searchResult.getObj().getGeometry().get(0).getPoint();
-                    if (resultLocation != null) {
-                        mapObjects.addPlacemark(
-                                resultLocation,
-                                ImageProvider.fromResource(context, R.drawable.search_result));
-                    }
-                }
-            }
-
-            @Override
-            public void onSearchError(@NonNull Error error) {
-                String errorMessage = "ну ты и балда";
-                if (error instanceof RemoteError) {
-                    errorMessage = "ну ты и балда";
-                } else if (error instanceof NetworkError) {
-                    errorMessage = "ну ты и балда";
-                }
-
-                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        };
-        searchSession = searchManager.submit(query, VisibleRegionUtils.toPolygon(mapView.getMap().getVisibleRegion()), new SearchOptions(), searchListener);
+        searchSession = searchManager.submit(query, VisibleRegionUtils.toPolygon(mapView.getMap().getVisibleRegion()), new SearchOptions(), this);
     }
 
 
+    @Override
+    public void onCameraPositionChanged(
+            Map map,
+            CameraPosition cameraPosition,
+            CameraUpdateReason cameraUpdateReason,
+            boolean finished) {
+        if (finished) {
+            submitQuery(searchEdit.getText().toString());
+        }
+    }
 
+    @Override
+    public void onSearchResponse(@NonNull Response response) {
+        MapObjectCollection mapObjects = mapView.getMap().getMapObjects();
+        mapObjects.clear();
+
+        for (GeoObjectCollection.Item searchResult : response.getCollection().getChildren()) {
+            int i = 0;
+            Point resultLocation = searchResult.getObj().getGeometry().get(0).getPoint();
+
+            Toast.makeText(context, String.valueOf(resultLocation.getLongitude()) + ":" + String.valueOf(resultLocation.getLatitude()), Toast.LENGTH_SHORT).show();
+            ((MainActivity) context).saveDataFloat(getString(R.string.actualCameraPositionLon), (float) resultLocation.getLongitude());
+            ((MainActivity) context).saveDataFloat(getString(R.string.actualCameraPositionLat), (float) resultLocation.getLatitude());
+
+            if (resultLocation != null) {
+
+//                Point startLoc = new Point(55.733330, 37.587649);
+//                Point destLoc = new Point(55.6692509, 37.2849947);
+
+//                mapObjects.addPlacemark(
+//                        resultLocation,
+//                        ImageProvider.fromResource(context, R.drawable.search_result));
+
+
+//                try {
+//                    for (int j = 0; j < 3; j++){
+//                        submitRequest(startLoc, destLoc);
+//                    }
+//                } catch (Exception e){
+//                    e.printStackTrace();
+//                }
+
+            }
+            i ++;
+            if (i == 1){
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onSearchError(@NonNull Error error) {
+        String errorMessage = "ну ты и балда";
+        if (error instanceof RemoteError) {
+            errorMessage = "ну ты и балда";
+        } else if (error instanceof NetworkError) {
+            errorMessage = "ну ты и балда";
+        }
+
+        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
+    }
 }
