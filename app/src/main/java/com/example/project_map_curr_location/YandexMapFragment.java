@@ -157,7 +157,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 //            Toast.makeText(context, "нууу и кого мы ждем?", Toast.LENGTH_SHORT).show();
 //
 //        }
-
+        userLocation();
 
         if (((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
 //            Point startLoc = new Point(55.733330, 37.587649);
@@ -182,7 +182,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
             }
 
         }
-        //userLocation();
+
     }
 
     private void submitQuery(String query) {

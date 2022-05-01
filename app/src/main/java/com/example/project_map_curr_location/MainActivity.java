@@ -9,9 +9,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.view.KeyEvent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -75,19 +75,41 @@ public class MainActivity extends AppCompatActivity {
 
         et_FindLocation = findViewById(R.id.et_FindLocation);
 
-        et_FindLocation.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//        et_FindLocation.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+//                //Toast.makeText(getApplicationContext(), "ААААА" + et_FindLocation.getText(), Toast.LENGTH_SHORT).show();
+//                saveDataString(getString(R.string.findLocationEditText), String.valueOf(et_FindLocation.getText()));
+//                return false;
+//            }
+//
+//
+//        });
+
+
+        et_FindLocation.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                //Toast.makeText(getApplicationContext(), "ААААА" + et_FindLocation.getText(), Toast.LENGTH_SHORT).show();
-                saveDataString(getString(R.string.findLocationEditText), String.valueOf(et_FindLocation.getText()));
-                return false;
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
             }
 
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                saveDataString(getString(R.string.findLocationEditText), String.valueOf(et_FindLocation.getText()));
+            }
         });
 
 
+    }
 
+    public void cancelTripEditText(){
+        saveDataString(getString(R.string.findLocationEditText), "");
+        et_FindLocation.setText("");
     }
 
     private void micAndLogin(){
