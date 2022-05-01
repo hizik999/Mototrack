@@ -34,7 +34,6 @@ import com.yandex.mapkit.map.CompositeIcon;
 import com.yandex.mapkit.map.IconStyle;
 import com.yandex.mapkit.map.Map;
 import com.yandex.mapkit.map.MapObjectCollection;
-import com.yandex.mapkit.map.PlacemarkMapObject;
 import com.yandex.mapkit.map.RotationType;
 import com.yandex.mapkit.map.VisibleRegionUtils;
 import com.yandex.mapkit.mapview.MapView;
@@ -79,6 +78,8 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
     private EditText searchEdit;
     private SearchManager searchManager;
     private Session searchSession;
+
+
 
 //    private TrafficLevel trafficLevel = null;
 //    private enum TrafficFreshness {Loading, OK, Expired};
@@ -157,8 +158,8 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 //            Toast.makeText(context, "нууу и кого мы ждем?", Toast.LENGTH_SHORT).show();
 //
 //        }
-        userLocation();
 
+        userLocation();
         if (((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
 //            Point startLoc = new Point(55.733330, 37.587649);
 //            Point destLoc = new Point(55.6692509, 37.2849947);
@@ -216,7 +217,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 //                ((MainActivity) context).saveDataFloat(getString(R.string.actualCameraPositionLon), (float) resultLocation.getLongitude());
 //                ((MainActivity) context).saveDataFloat(getString(R.string.actualCameraPositionLat), (float) resultLocation.getLatitude());
 
-                Point startLoc = new Point(55.733330, 37.587649);
+                Point startLoc = new Point(((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat)), ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon)));
 //                Point destLoc = new Point(((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat)), ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon)));
                 Point destLoc = new Point(resultLocation.getLatitude(), resultLocation.getLongitude());
                 submitRequest(startLoc, destLoc);
@@ -244,6 +245,78 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
             }
         }
     }
+
+    private void userLocation(){
+        MapKit mapKit = MapKitFactory.getInstance();
+        userLocationLayer = mapKit.createUserLocationLayer(mapView.getMapWindow());
+        userLocationLayer.setVisible(true);
+        userLocationLayer.setHeadingEnabled(true);
+
+        Point p1;
+        float[] lat = new float[1];
+        float[] lon = new float[1];
+        UserLocationObjectListener listener = new UserLocationObjectListener() {
+            @Override
+            public void onObjectAdded(@NonNull UserLocationView userLocationView) {
+
+                userLocationLayer.setAnchor(
+                        new PointF((float)(mapView.getWidth() * 0.5), (float)(mapView.getHeight() * 0.5)),
+                        new PointF((float)(mapView.getWidth() * 0.5), (float)(mapView.getHeight() * 0.83)));
+
+                userLocationView.getArrow().setIcon(ImageProvider.fromResource(
+                        context, R.drawable.user_arrow));
+
+                CompositeIcon pinIcon = userLocationView.getPin().useCompositeIcon();
+
+                lat[0] = (float) userLocationView.getArrow().getGeometry().getLatitude();
+                lon[0] = (float) actualPosition.getLongitude();
+                //p1 = new Point(actualPosition.getLatitude(), actualPosition.getLongitude());
+                Toast.makeText(context, actualPosition.getLatitude() + ": " + actualPosition.getLongitude(), Toast.LENGTH_SHORT).show();
+//                pinIcon.setIcon(
+//                        "icon",
+//                        ImageProvider.fromResource(context, R.drawable.icon),
+//                        new IconStyle().setAnchor(new PointF(0f, 0f))
+//                                .setRotationType(RotationType.ROTATE)
+//                                .setZIndex(0f)
+//                                .setScale(1f)
+//                );
+
+//                pinIcon.setIcon(
+//                        "pin",
+//                        ImageProvider.fromResource(context, R.drawable.search_result),
+//                        new IconStyle().setAnchor(new PointF(0.5f, 0.5f))
+//                                .setRotationType(RotationType.ROTATE)
+//                                .setZIndex(1f)
+//                                .setScale(0.5f)
+//                );
+
+
+                //Toast.makeText(context, p1.getLongitude() + ": " + p1.getLatitude(), Toast.LENGTH_SHORT).show();
+
+//                PointF pointF = new PointF(0.5f, 0.5f);
+                Toast.makeText(getContext(), String.valueOf(lat[0]), Toast.LENGTH_SHORT).show();
+
+                userLocationView.getAccuracyCircle().setFillColor(Color.BLUE & 0x99ffffff);
+            }
+
+            @Override
+            public void onObjectRemoved(@NonNull UserLocationView userLocationView) {
+                //Toast.makeText(getContext(), "1234", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onObjectUpdated(@NonNull UserLocationView userLocationView, @NonNull ObjectEvent objectEvent) {
+                //Toast.makeText(getContext(), "1235", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        userLocationLayer.setObjectListener(listener);
+
+        Toast.makeText(getContext(), lat[0] + ": " + lon[0], Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, String.valueOf(p1), Toast.LENGTH_SHORT).show();
+//        return p1;
+    }
+
 
     @Override
     public void onSearchError(@NonNull Error error) {
@@ -344,68 +417,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         drivingSession = drivingRouter.requestRoutes(requestPoints, drivingOptions, vehicleOptions, drivingRouteListener);
     }
 
-    private void userLocation(){
-        MapKit mapKit = MapKitFactory.getInstance();
-        userLocationLayer = mapKit.createUserLocationLayer(mapView.getMapWindow());
-        userLocationLayer.setVisible(true);
-        userLocationLayer.setHeadingEnabled(true);
 
-        UserLocationObjectListener listener = new UserLocationObjectListener() {
-            @Override
-            public void onObjectAdded(@NonNull UserLocationView userLocationView) {
-                userLocationLayer.setAnchor(
-                        new PointF((float)(mapView.getWidth() * 0.5), (float)(mapView.getHeight() * 0.5)),
-                        new PointF((float)(mapView.getWidth() * 0.5), (float)(mapView.getHeight() * 0.83)));
-
-
-
-                PlacemarkMapObject x = userLocationView.getArrow();
-                Point userLoc = x.getGeometry();
-
-
-
-//                if (((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
-//                    submitRequest(userLoc, destLoc);
-//                }
-
-                userLocationView.getArrow().setIcon(ImageProvider.fromResource(
-                        context, R.drawable.user_arrow));
-                CompositeIcon pinIcon = userLocationView.getPin().useCompositeIcon();
-
-//                pinIcon.setIcon(
-//                        "icon",
-//                        ImageProvider.fromResource(context, R.drawable.icon),
-//                        new IconStyle().setAnchor(new PointF(0f, 0f))
-//                                .setRotationType(RotationType.ROTATE)
-//                                .setZIndex(0f)
-//                                .setScale(1f)
-//                );
-
-                pinIcon.setIcon(
-                        "pin",
-                        ImageProvider.fromResource(context, R.drawable.search_result),
-                        new IconStyle().setAnchor(new PointF(0.5f, 0.5f))
-                                .setRotationType(RotationType.ROTATE)
-                                .setZIndex(1f)
-                                .setScale(0.5f)
-                );
-
-                userLocationView.getAccuracyCircle().setFillColor(Color.BLUE & 0x99ffffff);
-            }
-
-            @Override
-            public void onObjectRemoved(@NonNull UserLocationView userLocationView) {
-
-            }
-
-            @Override
-            public void onObjectUpdated(@NonNull UserLocationView userLocationView, @NonNull ObjectEvent objectEvent) {
-
-            }
-        };
-
-        userLocationLayer.setObjectListener(listener);
-    }
 
 
 

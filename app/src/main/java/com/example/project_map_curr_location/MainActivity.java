@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
@@ -25,6 +28,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.mapbox.mapboxsdk.maps.MapView;
 
 import java.util.ArrayList;
@@ -56,6 +65,13 @@ public class MainActivity extends AppCompatActivity {
 
     private MediaPlayer sound;
 
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallBack;
+    public static final int DEFAULT_UPDATE_INTERVAL = 30;
+    public static final int FASTEST_UPDATE_INTERVAL = 5;
+    private static final int PERMISSONS_FINE_LOCATION = 100;
+    private boolean geoStatus = true;
 
     private static final int request_Code = 101;
 
@@ -104,8 +120,99 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(1000 * DEFAULT_UPDATE_INTERVAL);
+        locationRequest.setFastestInterval(1000 * FASTEST_UPDATE_INTERVAL);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        locationCallBack = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                updateUIVAluses(locationResult.getLastLocation());
+            }
+        };
+
+
+        Thread geoThread = new MyTread();
+
+        geoThread.start();
 
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        saveDataInt(getString(R.string.car_or_moto), 1);
+        geoStatus = false;
+    }
+
+    private class MyTread extends Thread{
+
+        @Override
+        public void run() {
+            updateGPS();
+            while (geoStatus){
+                updateGPS();
+                try {
+                    sleep(1 * 5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void updateUIVAluses(Location location) {
+        saveDataFloat(getString(R.string.actualCameraPositionLat), (float) location.getLatitude());
+        saveDataFloat(getString(R.string.actualCameraPositionLon), (float) location.getLongitude());
+
+        Toast.makeText(getApplicationContext(), loadDataFloat(getString(R.string.actualCameraPositionLat)) + ": " + loadDataFloat(getString(R.string.actualCameraPositionLon)), Toast.LENGTH_SHORT).show();
+    }
+
+    private void startLocationUpdates() {
+
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
+        updateGPS();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case PERMISSONS_FINE_LOCATION:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    updateGPS();
+                } else {
+                    Toast.makeText(MainActivity.this, "no GPS!", Toast.LENGTH_SHORT).show();
+//                    finish();
+                }
+        }
+
+    }
+
+    private void updateGPS() {
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    updateUIVAluses(location);
+                }
+            });
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSONS_FINE_LOCATION);
+            }
+        }
+    }
+
+
 
     public void cancelTripEditText(){
         saveDataString(getString(R.string.findLocationEditText), "");
@@ -142,11 +249,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        saveDataInt(getString(R.string.car_or_moto), 1);
-    }
+
 
     private void speak() {
         //РУССКИЙ НЕ РАБОТАЕТ
