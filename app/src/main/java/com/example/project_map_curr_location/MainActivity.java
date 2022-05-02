@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //        });
 
-
+        et_FindLocation.setHint(R.string.inputAddressEditText);
         et_FindLocation.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -119,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
                 saveDataString(getString(R.string.findLocationEditText), String.valueOf(et_FindLocation.getText()));
             }
         });
+
+        et_FindLocation.setText(loadDataString(getString(R.string.findLocationEditText)));
 
         locationRequest = new LocationRequest();
         locationRequest.setInterval(1000 * DEFAULT_UPDATE_INTERVAL);
@@ -166,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         saveDataFloat(getString(R.string.actualCameraPositionLat), (float) location.getLatitude());
         saveDataFloat(getString(R.string.actualCameraPositionLon), (float) location.getLongitude());
 
-        Toast.makeText(getApplicationContext(), loadDataFloat(getString(R.string.actualCameraPositionLat)) + ": " + loadDataFloat(getString(R.string.actualCameraPositionLon)), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), loadDataFloat(getString(R.string.actualCameraPositionLat)) + ": " + loadDataFloat(getString(R.string.actualCameraPositionLon)), Toast.LENGTH_SHORT).show();
     }
 
     private void startLocationUpdates() {

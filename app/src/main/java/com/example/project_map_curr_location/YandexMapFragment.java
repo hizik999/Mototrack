@@ -30,7 +30,6 @@ import com.yandex.mapkit.layers.ObjectEvent;
 import com.yandex.mapkit.map.CameraListener;
 import com.yandex.mapkit.map.CameraPosition;
 import com.yandex.mapkit.map.CameraUpdateReason;
-import com.yandex.mapkit.map.CompositeIcon;
 import com.yandex.mapkit.map.IconStyle;
 import com.yandex.mapkit.map.Map;
 import com.yandex.mapkit.map.MapObjectCollection;
@@ -129,6 +128,10 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         drivingRouter = DirectionsFactory.getInstance().createDrivingRouter();
         mapObjects = mapView.getMap().getMapObjects().addCollection();
 
+        double lat = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat));
+        double lon = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon));
+        mapView.getMap().move(new CameraPosition(
+                new Point(lat, lon), 14, 0, 0));
 //        searchEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 //            @Override
 //            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -160,30 +163,36 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 //        }
 
         userLocation();
+
         if (((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
-//            Point startLoc = new Point(55.733330, 37.587649);
-//            Point destLoc = new Point(55.6692509, 37.2849947);
-
-
-
             traffic.setTrafficVisible(false);
 
             try {
-                for (int i = 0; i < 1; i++){
                     mapObjects.clear();
                     String text = ((MainActivity) context).loadDataString(getString(R.string.findLocationEditText));
-                    Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
                     submitQuery(text);
-
-
-                }
 
             } catch (Exception e){
                 e.printStackTrace();
             }
 
-        }
 
+
+//            mapObjects.addPlacemark(new Point(55.733330, 37.587649)).setIcon(ImageProvider.fromResource(
+//                    context, R.drawable.ic_red_moped));
+
+
+
+
+        }
+        mapView.getMap().getMapObjects().addPlacemark(new Point(54.513553, 36.259944),
+                ImageProvider.fromResource(getContext(), R.drawable.motopng),
+                new IconStyle().setAnchor(new PointF(0.1f, 0.1f))
+                                .setRotationType(RotationType.NO_ROTATION)
+                                .setZIndex(0.5f)
+                                .setScale(0.5f))
+        ;
     }
 
     private void submitQuery(String query) {
@@ -218,7 +227,6 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 //                ((MainActivity) context).saveDataFloat(getString(R.string.actualCameraPositionLat), (float) resultLocation.getLatitude());
 
                 Point startLoc = new Point(((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat)), ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon)));
-//                Point destLoc = new Point(((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat)), ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon)));
                 Point destLoc = new Point(resultLocation.getLatitude(), resultLocation.getLongitude());
                 submitRequest(startLoc, destLoc);
 
@@ -252,9 +260,6 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         userLocationLayer.setVisible(true);
         userLocationLayer.setHeadingEnabled(true);
 
-        Point p1;
-        float[] lat = new float[1];
-        float[] lon = new float[1];
         UserLocationObjectListener listener = new UserLocationObjectListener() {
             @Override
             public void onObjectAdded(@NonNull UserLocationView userLocationView) {
@@ -266,12 +271,8 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
                 userLocationView.getArrow().setIcon(ImageProvider.fromResource(
                         context, R.drawable.user_arrow));
 
-                CompositeIcon pinIcon = userLocationView.getPin().useCompositeIcon();
+//                CompositeIcon pinIcon = userLocationView.getPin().useCompositeIcon();
 
-                lat[0] = (float) userLocationView.getArrow().getGeometry().getLatitude();
-                lon[0] = (float) actualPosition.getLongitude();
-                //p1 = new Point(actualPosition.getLatitude(), actualPosition.getLongitude());
-                Toast.makeText(context, actualPosition.getLatitude() + ": " + actualPosition.getLongitude(), Toast.LENGTH_SHORT).show();
 //                pinIcon.setIcon(
 //                        "icon",
 //                        ImageProvider.fromResource(context, R.drawable.icon),
@@ -290,12 +291,6 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 //                                .setScale(0.5f)
 //                );
 
-
-                //Toast.makeText(context, p1.getLongitude() + ": " + p1.getLatitude(), Toast.LENGTH_SHORT).show();
-
-//                PointF pointF = new PointF(0.5f, 0.5f);
-                Toast.makeText(getContext(), String.valueOf(lat[0]), Toast.LENGTH_SHORT).show();
-
                 userLocationView.getAccuracyCircle().setFillColor(Color.BLUE & 0x99ffffff);
             }
 
@@ -311,10 +306,6 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         };
 
         userLocationLayer.setObjectListener(listener);
-
-        Toast.makeText(getContext(), lat[0] + ": " + lon[0], Toast.LENGTH_SHORT).show();
-        //Toast.makeText(context, String.valueOf(p1), Toast.LENGTH_SHORT).show();
-//        return p1;
     }
 
 

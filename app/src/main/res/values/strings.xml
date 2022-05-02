@@ -48,5 +48,6 @@
     <string name="actualCameraPositionLon">actualCameraPositionLon</string>
     <string name="tripEnd">tripEnd</string>
     <string name="findLocationEditText">findLocationEditText</string>
+    <string name="inputAddressEditText">Введите адрес</string>
 
 </resources>
