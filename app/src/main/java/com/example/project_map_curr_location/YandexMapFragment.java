@@ -186,13 +186,23 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
 
         }
-        mapView.getMap().getMapObjects().addPlacemark(new Point(54.513553, 36.259944),
-                ImageProvider.fromResource(getContext(), R.drawable.motopng),
-                new IconStyle().setAnchor(new PointF(0.1f, 0.1f))
-                                .setRotationType(RotationType.NO_ROTATION)
-                                .setZIndex(0.5f)
-                                .setScale(0.5f))
-        ;
+
+        for (Motorcycle motorcycle: motorcycleList) {
+            mapView.getMap().getMapObjects().addPlacemark(new Point(motorcycle.getLatitude(), motorcycle.getLongitude()),ImageProvider.fromResource(getContext(), R.drawable.motopng),
+                    new IconStyle().setAnchor(new PointF(0.1f, 0.1f))
+                            .setRotationType(RotationType.NO_ROTATION)
+                            .setZIndex(0.5f)
+                            .setScale(0.5f))
+                            ;
+        }
+
+//        mapView.getMap().getMapObjects().addPlacemark(new Point(54.513553, 36.259944),
+//                ImageProvider.fromResource(getContext(), R.drawable.motopng),
+//                new IconStyle().setAnchor(new PointF(0.1f, 0.1f))
+//                                .setRotationType(RotationType.NO_ROTATION)
+//                                .setZIndex(0.5f)
+//                                .setScale(0.5f))
+//        ;
     }
 
     private void submitQuery(String query) {
