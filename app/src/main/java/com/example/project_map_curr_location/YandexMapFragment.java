@@ -117,14 +117,8 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
         mapView = view.findViewById(R.id.mapView);
 
-
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED);
 
-//        float lat = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat));
-//        float lon = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon));
-//        actualPosition = new Point((double) lat, (double) lon);
-//
-//        mapView.getMap().move(new CameraPosition(actualPosition, 1, 0, 0));
         drivingRouter = DirectionsFactory.getInstance().createDrivingRouter();
         mapObjects = mapView.getMap().getMapObjects().addCollection();
 
@@ -132,60 +126,33 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         double lon = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon));
         mapView.getMap().move(new CameraPosition(
                 new Point(lat, lon), 14, 0, 0));
-//        searchEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-//                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-//                    submitQuery(searchEdit.getText().toString());
-//                }
-//
-//                return false;
-//            }
-//        });
 
         traffic = MapKitFactory.getInstance().createTrafficLayer(mapView.getMapWindow());
         traffic.setTrafficVisible(false);
 
-
-
-//
-//
-//        if (!text.equals("")){
-            //Toast.makeText(context, "я все понял ура ура", Toast.LENGTH_SHORT).show();
-//            onViewCreated(view, savedInstanceState);
-
-//            ((MainActivity) context).saveDataString(getString(R.string.findLocationEditText), "");
-        //}
-
-//        if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
-//            Toast.makeText(context, "нууу и кого мы ждем?", Toast.LENGTH_SHORT).show();
-//
-//        }
 
         userLocation();
 
         if (((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
             traffic.setTrafficVisible(false);
 
-            try {
-                    mapObjects.clear();
-                    String text = ((MainActivity) context).loadDataString(getString(R.string.findLocationEditText));
-                    //Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
-                    submitQuery(text);
+            mapObjects.clear();
+            String text = ((MainActivity) context).loadDataString(getString(R.string.findLocationEditText));
+            submitQuery(text);
 
-            } catch (Exception e){
-                e.printStackTrace();
+            if (((MainActivity) context).loadDataInt(getString(R.string.car_or_moto)) == 0){
+
+                printMotos();
             }
-
-
-
-//            mapObjects.addPlacemark(new Point(55.733330, 37.587649)).setIcon(ImageProvider.fromResource(
-//                    context, R.drawable.ic_red_moped));
 
 
 
 
         }
+
+    }
+
+    private void printMotos() {
 
         for (Motorcycle motorcycle: motorcycleList) {
             mapView.getMap().getMapObjects().addPlacemark(new Point(motorcycle.getLatitude(), motorcycle.getLongitude()),ImageProvider.fromResource(getContext(), R.drawable.motopng),
@@ -193,16 +160,19 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
                             .setRotationType(RotationType.NO_ROTATION)
                             .setZIndex(0.5f)
                             .setScale(0.5f))
-                            ;
+            ;
         }
+    }
 
-//        mapView.getMap().getMapObjects().addPlacemark(new Point(54.513553, 36.259944),
-//                ImageProvider.fromResource(getContext(), R.drawable.motopng),
-//                new IconStyle().setAnchor(new PointF(0.1f, 0.1f))
-//                                .setRotationType(RotationType.NO_ROTATION)
-//                                .setZIndex(0.5f)
-//                                .setScale(0.5f))
-//        ;
+    private class MyThread extends Thread{
+
+        @Override
+        public void run() {
+//            super.run();
+
+
+
+        }
     }
 
     private void submitQuery(String query) {
@@ -223,38 +193,16 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
     @Override
     public void onSearchResponse(@NonNull Response response) {
-        //MapObjectCollection mapObjects = mapView.getMap().getMapObjects();
-//        mapObjects.clear();
 
         for (GeoObjectCollection.Item searchResult : response.getCollection().getChildren()) {
             int i = 0;
             Point resultLocation = searchResult.getObj().getGeometry().get(0).getPoint();
 
-            //Toast.makeText(context, String.valueOf(resultLocation.getLongitude()) + ":" + String.valueOf(resultLocation.getLatitude()), Toast.LENGTH_SHORT).show();
-
             if (resultLocation != null) {
-//                ((MainActivity) context).saveDataFloat(getString(R.string.actualCameraPositionLon), (float) resultLocation.getLongitude());
-//                ((MainActivity) context).saveDataFloat(getString(R.string.actualCameraPositionLat), (float) resultLocation.getLatitude());
 
                 Point startLoc = new Point(((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat)), ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon)));
                 Point destLoc = new Point(resultLocation.getLatitude(), resultLocation.getLongitude());
                 submitRequest(startLoc, destLoc);
-
-//                Point startLoc = new Point(55.733330, 37.587649);
-//                Point destLoc = new Point(55.6692509, 37.2849947);
-
-//                mapObjects.addPlacemark(
-//                        resultLocation,
-//                        ImageProvider.fromResource(context, R.drawable.search_result));
-
-
-//                try {
-//                    for (int j = 0; j < 3; j++){
-//                        submitRequest(startLoc, destLoc);
-//                    }
-//                } catch (Exception e){
-//                    e.printStackTrace();
-//                }
 
             }
             i ++;
@@ -306,12 +254,10 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
             @Override
             public void onObjectRemoved(@NonNull UserLocationView userLocationView) {
-                //Toast.makeText(getContext(), "1234", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onObjectUpdated(@NonNull UserLocationView userLocationView, @NonNull ObjectEvent objectEvent) {
-                //Toast.makeText(getContext(), "1235", Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -335,43 +281,27 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
     public void onPause() {
         mapView.onStop();
         MapKitFactory.getInstance().onStop();
-        //mapObjects.clear();
-
-//        mapObjects.clear();
-        //Toast.makeText(context, "OnPause", Toast.LENGTH_SHORT).show();
-
-//        ScreenPoint screenPoint = mapView.getFocusPoint();
-//        float x = screenPoint.getX();
-//        float y = screenPoint.getY();
-
-//        ((MainActivity) context).saveDataFloat(getString(R.string.actualCameraPositionLon), x);
-//        ((MainActivity) context).saveDataFloat(getString(R.string.actualCameraPositionLat), y);
         super.onPause();
     }
+
 //search, suggest, jams
     @Override
     public void onStop() {
         mapView.onStop();
-        //mapObjects.clear();
-
         MapKitFactory.getInstance().onStop();
-        //Toast.makeText(context, "OnStop", Toast.LENGTH_SHORT).show();
-        super.onStop();
 
+        super.onStop();
     }
 
     @Override
     public void onStart() {
-        // Activity onStart call must be passed to both MapView and MapKit instance.
         super.onStart();
         MapKitFactory.getInstance().onStart();
-        //Toast.makeText(context, "OnStart", Toast.LENGTH_SHORT).show();
+
         mapView.onStart();
     }
 
     private void submitRequest(Point tripStart, Point tripEnd) {
-
-        //mapObjects.clear();
 
         DrivingOptions drivingOptions = new DrivingOptions();
         VehicleOptions vehicleOptions = new VehicleOptions();
@@ -387,7 +317,6 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         DrivingSession.DrivingRouteListener drivingRouteListener = new DrivingSession.DrivingRouteListener() {
             @Override
             public void onDrivingRoutes(@NonNull List<DrivingRoute> list) {
-//                mapObjects.clear();
                 int i = 0;
                 for (DrivingRoute route : list) {
                     mapObjects.addPlacemark(tripEnd).setIcon(ImageProvider.fromResource(context, R.drawable.search_result),
@@ -417,10 +346,6 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         };
         drivingSession = drivingRouter.requestRoutes(requestPoints, drivingOptions, vehicleOptions, drivingRouteListener);
     }
-
-
-
-
 
 
 }
