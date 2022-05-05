@@ -1,4 +1,4 @@
-package com.example.project_map_curr_location;
+package com.example.project_map_curr_location.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -12,6 +12,10 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.collection.ArrayMap;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.project_map_curr_location.MainActivity;
+import com.example.project_map_curr_location.domain.Moto;
+import com.example.project_map_curr_location.R;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,10 +24,10 @@ import java.util.Map;
 public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosHolder> {
 
     private Context context;
-    private List<Motorcycle> motorcycleList = new ArrayList<Motorcycle>();
+    private List<Moto> motorcycleList = new ArrayList<Moto>();
     private Map<Integer, String> positions = new ArrayMap<>();
 
-    public RVMotosAdapter(List<Motorcycle> motorcycleArrayList) {
+    public RVMotosAdapter(List<Moto> motorcycleArrayList) {
         this.motorcycleList = motorcycleArrayList;
     }
 
@@ -49,7 +53,7 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
 
     }
 
-    public void setItems(Collection<Motorcycle> motorcycles) {
+    public void setItems(Collection<Moto> motorcycles) {
         motorcycleList.addAll(motorcycles);
         notifyDataSetChanged();
     }
@@ -59,7 +63,7 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
         notifyDataSetChanged();
     }
 
-    public void setItem(Motorcycle motorcycle) {
+    public void setItem(Moto motorcycle) {
         motorcycleList.add(motorcycle);
         notifyDataSetChanged();
     }

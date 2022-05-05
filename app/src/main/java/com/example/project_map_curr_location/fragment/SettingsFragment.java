@@ -1,4 +1,4 @@
-package com.example.project_map_curr_location;
+package com.example.project_map_curr_location.fragment;
 
 import android.Manifest;
 import android.content.Context;
@@ -24,6 +24,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.project_map_curr_location.MainActivity;
+import com.example.project_map_curr_location.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;

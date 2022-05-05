@@ -1,4 +1,4 @@
-package com.example.project_map_curr_location;
+package com.example.project_map_curr_location.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.project_map_curr_location.additionals.CircleTransform;
+import com.example.project_map_curr_location.R;
 import com.squareup.picasso.Picasso;
 
 public class AccountFragment extends Fragment {

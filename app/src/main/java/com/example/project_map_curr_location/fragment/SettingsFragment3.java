@@ -1,4 +1,4 @@
-package com.example.project_map_curr_location;
+package com.example.project_map_curr_location.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,6 +12,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
+
+import com.example.project_map_curr_location.MainActivity;
+import com.example.project_map_curr_location.R;
 
 import nl.bryanderidder.themedtogglebuttongroup.ThemedButton;
 import nl.bryanderidder.themedtogglebuttongroup.ThemedToggleButtonGroup;

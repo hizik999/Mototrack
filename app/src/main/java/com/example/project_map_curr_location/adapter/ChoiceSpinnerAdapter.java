@@ -1,4 +1,4 @@
-package com.example.project_map_curr_location;
+package com.example.project_map_curr_location.adapter;
 
 import android.app.Activity;
 import android.view.View;

@@ -1,4 +1,4 @@
-package com.example.project_map_curr_location;
+package com.example.project_map_curr_location.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,12 +15,17 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.project_map_curr_location.MainActivity;
+import com.example.project_map_curr_location.R;
+import com.example.project_map_curr_location.adapter.RVMotosAdapter;
+import com.example.project_map_curr_location.domain.Moto;
+
 import java.util.ArrayList;
 
 public class MopedFragment extends Fragment {
 
     private RecyclerView rvMotos;
-    private ArrayList<Motorcycle> motorcycleArrayList;
+    private ArrayList<Moto> motorcycleArrayList;
     private AppCompatButton userShowOnMap;
     private Context context;
     private TextView tv_motos;
@@ -59,8 +64,8 @@ public class MopedFragment extends Fragment {
         motorcycleArrayList = new ArrayList<>();
 
         //motorcycleArrayList.add(new Motorcycle(0,120, 55.6692280, 37.2849931, 0, "Andy"));
-        motorcycleArrayList.add(new Motorcycle(0, 120, 37.2849947, 55.6692509, 0, "Andy"));
-        motorcycleArrayList.add(new Motorcycle(1, 100, 55.6692569, 37.2849319, 0, "Senya"));
-        motorcycleArrayList.add(new Motorcycle(2, 80, 55.6692579, 37.2849319, 0, "Denis"));
+        motorcycleArrayList.add(new Moto(0, 120, 37.2849947, 55.6692509, 0, "Andy"));
+        motorcycleArrayList.add(new Moto(1, 100, 55.6692569, 37.2849319, 0, "Senya"));
+        motorcycleArrayList.add(new Moto(2, 80, 55.6692579, 37.2849319, 0, "Denis"));
     }
 }

@@ -1,8 +1,8 @@
-package com.example.project_map_curr_location;
+package com.example.project_map_curr_location.domain;
 
 import java.io.Serializable;
 
-public class Motorcycle implements Serializable {
+public class Moto implements Serializable {
 
     private long id;
     private String name;
@@ -11,7 +11,7 @@ public class Motorcycle implements Serializable {
     private double longitude;
     private double altitude;
 
-    public Motorcycle(long id, int speed, double latitude, double longitude, double altitude, String name) {
+    public Moto(long id, int speed, double latitude, double longitude, double altitude, String name) {
         this.id = id;
         this.speed = speed;
         this.latitude = latitude;

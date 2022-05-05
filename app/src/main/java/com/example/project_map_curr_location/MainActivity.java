@@ -28,13 +28,19 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
+import com.example.project_map_curr_location.adapter.RVMotosAdapter;
+import com.example.project_map_curr_location.domain.Moto;
+import com.example.project_map_curr_location.fragment.AccountFragment;
+import com.example.project_map_curr_location.fragment.FakeMopedFragment;
+import com.example.project_map_curr_location.fragment.MopedFragment;
+import com.example.project_map_curr_location.fragment.SettingsFragment3;
+import com.example.project_map_curr_location.fragment.YandexMapFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.mapbox.mapboxsdk.maps.MapView;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -75,10 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int request_Code = 101;
 
-    private ArrayList<Motorcycle> motorcycleArrayList;
-
-
-    private MapView mapView;
+    private ArrayList<Moto> motorcycleArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         setBottomNavigation();
         RVMotosAdapter rvMotosAdapter = new RVMotosAdapter(this);
         micAndLogin();
-
+//        sendNotificationStatus();
         et_FindLocation = findViewById(R.id.et_FindLocation);
 
 //        et_FindLocation.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -138,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+
     }
 
     @Override
@@ -147,16 +151,20 @@ public class MainActivity extends AppCompatActivity {
         geoStatus = false;
     }
 
-    private class MyTread extends Thread{
+    private class MyTread extends Thread {
 
         @Override
         public void run() {
-            updateGPS();
-            while (geoStatus){
-                updateGPS();
+
+            while (geoStatus) {
                 try {
-                    sleep(1 * 5000);
-                } catch (InterruptedException e) {
+                    updateGPS();
+                    try {
+                        sleep(1 * 5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -214,13 +222,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    public void cancelTripEditText(){
+    public void cancelTripEditText() {
         saveDataString(getString(R.string.findLocationEditText), "");
         et_FindLocation.setText("");
     }
 
-    private void micAndLogin(){
+    private void micAndLogin() {
         et_FindLocation = findViewById(R.id.et_FindLocation);
         btn_findLocationMicro = findViewById(R.id.btn_findLocationMicro);
 
@@ -251,7 +258,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     private void speak() {
         //РУССКИЙ НЕ РАБОТАЕТ
         Locale russian = new Locale("RU");
@@ -264,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
-        } catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "а?шо?", Toast.LENGTH_SHORT).show();
         }
     }
@@ -273,9 +279,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode){
+        switch (requestCode) {
             case REQUEST_CODE_SPEECH_INPUT:
-                if (resultCode == RESULT_OK && data != null){
+                if (resultCode == RESULT_OK && data != null) {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String res = result.get(0);
                     et_FindLocation.setText((CharSequence) res);
@@ -339,7 +345,7 @@ public class MainActivity extends AppCompatActivity {
         fm.beginTransaction().replace(R.id.frame_layout, fragment).addToBackStack(null).commit();
     }
 
-    public void loadSettings(){
+    public void loadSettings() {
         curr_fragment = fragment_settings;
         fm.beginTransaction().replace(R.id.frame_layout, curr_fragment).addToBackStack(null).commit();
         bottomNavigation.show(1, true);
@@ -384,7 +390,7 @@ public class MainActivity extends AppCompatActivity {
                         curr_fragment = fragment_map;
                         break;
                     case 3:
-                        if (loadDataInt(getString(R.string.car_or_moto)) == 1){
+                        if (loadDataInt(getString(R.string.car_or_moto)) == 1) {
                             curr_fragment = fragment_fake_moped;
                         } else {
                             curr_fragment = fragment_moped;
@@ -418,13 +424,13 @@ public class MainActivity extends AppCompatActivity {
         motorcycleArrayList = new ArrayList<>();
 
         //motorcycleArrayList.add(new Motorcycle(0,120, 55.6692280, 37.2849931, 0, "Andy"));
-        motorcycleArrayList.add(new Motorcycle(0, 120, 37.2849947, 55.6692509, 0, "Мама Дениса"));
-        motorcycleArrayList.add(new Motorcycle(1, 100, 55.6692569, 37.2849319, 0, "Senya"));
-        motorcycleArrayList.add(new Motorcycle(2, 80, 55.6692579, 37.2849319, 0, "Denis"));
+        motorcycleArrayList.add(new Moto(0, 120, 37.2849947, 55.6692509, 0, "Мама Дениса"));
+        motorcycleArrayList.add(new Moto(1, 100, 55.6692569, 37.2849319, 0, "Senya"));
+        motorcycleArrayList.add(new Moto(2, 80, 55.6692579, 37.2849319, 0, "Denis"));
     }
 
     public void sendNotificationStatus() {
-        if (loadDataBoolean(getString(R.string.notification_status))){
+        if (loadDataBoolean(getString(R.string.notification_status))) {
             int x = loadDataInt("car_or_moto");
             CharSequence title = getText(R.string.notification_title_car);
             CharSequence desc = getText(R.string.notification_desc_car);
@@ -490,7 +496,7 @@ public class MainActivity extends AppCompatActivity {
         return value;
     }
 
-    public void saveDataFloat(String key, float value){
+    public void saveDataFloat(String key, float value) {
         sharedPreferences = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putFloat(key, value);
@@ -503,7 +509,7 @@ public class MainActivity extends AppCompatActivity {
         return value;
     }
 
-    public void saveDataString(String key, String value){
+    public void saveDataString(String key, String value) {
         sharedPreferences = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key, value);

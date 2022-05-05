@@ -1,4 +1,4 @@
-package com.example.project_map_curr_location;
+package com.example.project_map_curr_location.fragment;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -14,6 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.project_map_curr_location.MainActivity;
+import com.example.project_map_curr_location.R;
+import com.example.project_map_curr_location.domain.Moto;
 import com.yandex.mapkit.GeoObjectCollection;
 import com.yandex.mapkit.MapKit;
 import com.yandex.mapkit.MapKitFactory;
@@ -56,7 +59,7 @@ import java.util.List;
 
 public class YandexMapFragment extends Fragment implements Session.SearchListener, CameraListener {
 
-    private final ArrayList<Motorcycle> motorcycleList;
+    private final ArrayList<Moto> motorcycleList;
 
     private MapView mapView;
 
@@ -90,7 +93,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 //            (start.getLatitude() + end.getLatitude()) / 2,
 //            (start.getLongitude() + end.getLongitude()) / 2);
 
-    public YandexMapFragment(ArrayList<Motorcycle> motorcycleList) {
+    public YandexMapFragment(ArrayList<Moto> motorcycleList) {
         this.motorcycleList = motorcycleList;
     }
 
@@ -107,32 +110,15 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View mainView = inflater.inflate(R.layout.fragment_yandex_map, null);
-
-        
-
-        return mainView;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
-        super.onViewCreated(view, savedInstanceState);
-
-        mapView = view.findViewById(R.id.mapView);
-
+//        Toast.makeText(context, "OnCreateView", Toast.LENGTH_SHORT).show();
+        mapView = mainView.findViewById(R.id.mapView);
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED);
 
         drivingRouter = DirectionsFactory.getInstance().createDrivingRouter();
         mapObjects = mapView.getMap().getMapObjects().addCollection();
 
-        double lat = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat));
-        double lon = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon));
-        mapView.getMap().move(new CameraPosition(
-                new Point(lat, lon), 14, 0, 0));
-
         traffic = MapKitFactory.getInstance().createTrafficLayer(mapView.getMapWindow());
         traffic.setTrafficVisible(false);
-
 
         userLocation();
 
@@ -150,14 +136,30 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
 
 
-
         }
+
+        double lat = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat));
+        double lon = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon));
+        mapView.getMap().move(new CameraPosition(
+                new Point(lat, lon), 14, 0, 0));
+
+        return mainView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+        super.onViewCreated(view, savedInstanceState);
+//        Toast.makeText(context, "OnViewCreated", Toast.LENGTH_SHORT).show();
+
+
+
 
     }
 
     private void printMotos() {
 
-        for (Motorcycle motorcycle: motorcycleList) {
+        for (Moto motorcycle: motorcycleList) {
             mapView.getMap().getMapObjects().addPlacemark(new Point(motorcycle.getLatitude(), motorcycle.getLongitude()),ImageProvider.fromResource(getContext(), R.drawable.motopng),
                     new IconStyle().setAnchor(new PointF(0.1f, 0.1f))
                             .setRotationType(RotationType.NO_ROTATION)

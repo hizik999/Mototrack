@@ -36,6 +36,11 @@ android {
 
 dependencies {
 
+    // Volley - REST-взаимодействие с серверной частью
+    implementation 'com.android.volley:volley:1.2.1'
+    // Работа с json форматом для работы с запросами к серверу
+    implementation 'com.google.code.gson:gson:2.9.0'
+
     implementation 'com.yandex.android:maps.mobile:4.0.0-full'
     //implementation 'com.yandex.android:maps.mobile:4.0.0-lite'
 

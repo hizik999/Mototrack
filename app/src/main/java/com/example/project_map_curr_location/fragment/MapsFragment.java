@@ -1,4 +1,4 @@
-package com.example.project_map_curr_location;
+package com.example.project_map_curr_location.fragment;
 
 import android.Manifest;
 import android.content.Context;
@@ -18,6 +18,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.project_map_curr_location.R;
+import com.example.project_map_curr_location.adapter.RVMotosAdapter;
+import com.example.project_map_curr_location.domain.Moto;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -36,14 +39,14 @@ public class MapsFragment extends Fragment {
 
     private FusedLocationProviderClient fusedLocationProviderClient;
     private static final int request_Code = 101;
-    private List<Motorcycle> motorcycleList = new ArrayList<>();
+    private List<Moto> motorcycleList = new ArrayList<>();
     private boolean animateCamera = false;
     private int position;
     private int id;
     int pos;
 
 
-    public MapsFragment(List<Motorcycle> motorcycleList) {
+    public MapsFragment(List<Moto> motorcycleList) {
         this.motorcycleList = motorcycleList;
     }
 

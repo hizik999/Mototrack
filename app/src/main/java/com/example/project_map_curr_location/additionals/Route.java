@@ -1,4 +1,4 @@
-package com.example.project_map_curr_location;
+package com.example.project_map_curr_location.additionals;
 
 import android.app.ProgressDialog;
 import android.content.Context;
