@@ -84,6 +84,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Thread geoThread = new MyTread();
+        geoThread.start();
+
         setMotorcycleArrayList();
         setBottomNavigation();
         RVMotosAdapter rvMotosAdapter = new RVMotosAdapter(this);
@@ -133,11 +137,6 @@ public class MainActivity extends AppCompatActivity {
                 updateUIVAluses(locationResult.getLastLocation());
             }
         };
-
-
-        Thread geoThread = new MyTread();
-
-        geoThread.start();
 
     }
 

@@ -107,6 +107,9 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View mainView = inflater.inflate(R.layout.fragment_yandex_map, null);
+
+        
+
         return mainView;
     }
 
