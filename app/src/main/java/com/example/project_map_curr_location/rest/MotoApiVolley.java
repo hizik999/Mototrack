@@ -93,23 +93,29 @@ public class MotoApiVolley implements MotoApi {
                     @Override
                     public void onResponse(String response) {
                         fillMoto();
-                        Log.d("API_TEST1", response);
+                        Log.d(API_TEST, response);
                     }
                 },
 
                 errorListener
-        ) {
+        )
+            //ВОТ ЭТА ХУЙНЯ НЕ РАБОТАЕТ ПОТОМУ ЧТО КОНТРОЛЛЕР ТРЕБУЕТ ПАРАМЕТРЫ НЕ СТРИНГ А ДРУГИЕ
+            //А КАК ЭТО ПОМЕНЯТЬ Я НЕ ЕБУ ОТ СЛОВА СОВСЕМ ПОМОГИТЕ
+
+            // я понял в чем ошибка: нужен user_id от созданного user, без него работать не будет
+            // исправление нужно дописать в UserApiVolley, где уже будет браться user и вставляться в moto
+        {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
 
                 Map<String, String> params = new HashMap<>();
+
                 params.put("user_id", String.valueOf(moto.getUser().getId()));
                 params.put("speed", String.valueOf(moto.getSpeed()));
                 params.put("latitude", String.valueOf(moto.getLatitude()));
                 params.put("longitude", String.valueOf(moto.getLongitude()));
                 params.put("altitude", String.valueOf(moto.getAltitude()));
-
 
                 return params;
             }

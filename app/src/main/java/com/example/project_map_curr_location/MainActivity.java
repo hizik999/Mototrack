@@ -144,11 +144,11 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-
         new MotoApiVolley(this).fillMoto();
         new MotoApiVolley(this).addMoto(
                 new Moto1(
                         new User(
+                                1,
                                 "Sanya",
                                 "4erep",
                                 "ksandk@mail.ru",
