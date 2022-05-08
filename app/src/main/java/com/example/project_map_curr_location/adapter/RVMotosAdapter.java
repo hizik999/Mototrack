@@ -49,6 +49,8 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
             userDistance = itemView.findViewById(R.id.userDistance);
             userSpeed = itemView.findViewById(R.id.userSpeed);
             userShowOnMap = itemView.findViewById(R.id.userShowOnMap);
+
+
         }
 
     }
@@ -89,6 +91,10 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
     public void onBindViewHolder(@NonNull RVMotosHolder holder, @SuppressLint("RecyclerView") int position) {
         String name = motorcycleList.get(position).getName();
         holder.userName.setText(name);
+
+//        String distance = motorcycleList.get(position)
+//        holder.userDistance.setText();
+
         holder.userShowOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

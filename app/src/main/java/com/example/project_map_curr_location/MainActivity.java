@@ -30,11 +30,14 @@ import androidx.fragment.app.FragmentManager;
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
 import com.example.project_map_curr_location.adapter.RVMotosAdapter;
 import com.example.project_map_curr_location.domain.Moto;
+import com.example.project_map_curr_location.domain.Moto1;
+import com.example.project_map_curr_location.domain.User;
 import com.example.project_map_curr_location.fragment.AccountFragment;
 import com.example.project_map_curr_location.fragment.FakeMopedFragment;
 import com.example.project_map_curr_location.fragment.MopedFragment;
 import com.example.project_map_curr_location.fragment.SettingsFragment3;
 import com.example.project_map_curr_location.fragment.YandexMapFragment;
+import com.example.project_map_curr_location.rest.MotoApiVolley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -141,6 +144,23 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+
+        new MotoApiVolley(this).fillMoto();
+        new MotoApiVolley(this).addMoto(
+                new Moto1(
+                        new User(
+                                "Sanya",
+                                "4erep",
+                                "ksandk@mail.ru",
+                                "moto"
+                        ),
+                        50,
+                        23.543345,
+                        87.354565,
+                        32.56776
+                )
+        );
+        new MotoApiVolley(this).fillMoto();
 
     }
 
