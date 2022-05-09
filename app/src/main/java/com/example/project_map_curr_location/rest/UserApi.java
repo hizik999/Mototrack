@@ -6,6 +6,8 @@ public interface UserApi {
 
     void fillUser();
 
+    User getUserById(long id);
+
     void addUser(User user);
 
     void updateUser(
