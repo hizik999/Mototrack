@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MotoApiVolley implements MotoApi {
@@ -77,6 +78,42 @@ public class MotoApiVolley implements MotoApi {
         );
 
         requestQueue.add(arrayRequest);
+    }
+
+    @Override
+    public List<Moto1> getMoto() {
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = BASE_URL + "/moto";
+
+        JsonArrayRequest arrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject jsonObject = response.getJSONObject(i);
+                                Moto1 moto = MotoMapper.motoFromJson(jsonObject);
+                                arrayList.add(moto);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        Log.d(API_TEST, arrayList.toString());
+                    }
+                },
+
+                errorListener
+        );
+
+        requestQueue.add(arrayRequest);
+        return arrayList;
     }
 
     @Override

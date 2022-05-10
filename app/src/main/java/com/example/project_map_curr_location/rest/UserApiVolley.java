@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserApiVolley implements UserApi{
 
@@ -71,6 +72,42 @@ public class UserApiVolley implements UserApi{
         );
 
         requestQueue.add(arrayRequest);
+    }
+
+    @Override
+    public List<User> getUsers() {
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = BASE_URL + "/user";
+
+        JsonArrayRequest arrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject jsonObject = response.getJSONObject(i);
+                                User user = UserMapper.userFromJson(jsonObject);
+                                arrayList.add(user);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        Log.d(API_TEST, arrayList.toString());
+                    }
+                },
+
+                errorListener
+        );
+
+        requestQueue.add(arrayRequest);
+        return arrayList;
     }
 
     @Override

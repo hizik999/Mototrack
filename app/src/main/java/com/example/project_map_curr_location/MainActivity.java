@@ -13,6 +13,7 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -29,12 +30,14 @@ import androidx.fragment.app.FragmentManager;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
 import com.example.project_map_curr_location.adapter.RVMotosAdapter;
-import com.example.project_map_curr_location.domain.Moto;
+import com.example.project_map_curr_location.domain.Moto1;
+import com.example.project_map_curr_location.domain.User;
 import com.example.project_map_curr_location.fragment.AccountFragment;
 import com.example.project_map_curr_location.fragment.FakeMopedFragment;
 import com.example.project_map_curr_location.fragment.MopedFragment;
 import com.example.project_map_curr_location.fragment.SettingsFragment3;
 import com.example.project_map_curr_location.fragment.YandexMapFragment;
+import com.example.project_map_curr_location.rest.MotoApiVolley;
 import com.example.project_map_curr_location.rest.UserApiVolley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -44,6 +47,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -82,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int request_Code = 101;
 
-    private ArrayList<Moto> motorcycleArrayList;
+    private List<Moto1> motorcycleArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -432,11 +436,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void setMotorcycleArrayList() {
         motorcycleArrayList = new ArrayList<>();
+        List<User> userList = new ArrayList<>();
 
-        //motorcycleArrayList.add(new Motorcycle(0,120, 55.6692280, 37.2849931, 0, "Andy"));
-        motorcycleArrayList.add(new Moto(0, 120, 37.2849947, 55.6692509, 0, "Мама Дениса"));
-        motorcycleArrayList.add(new Moto(1, 100, 55.6692569, 37.2849319, 0, "Senya"));
-        motorcycleArrayList.add(new Moto(2, 80, 55.6692579, 37.2849319, 0, "Denis"));
+        userList = new UserApiVolley(this).getUsers();
+        motorcycleArrayList = new MotoApiVolley(this).getMoto();
+
+        Log.d("API_TEST", userList.toString());
+        Log.d("API_TEST", motorcycleArrayList.toString());
     }
 
     public void sendNotificationStatus() {

@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.project_map_curr_location.MainActivity;
 import com.example.project_map_curr_location.R;
-import com.example.project_map_curr_location.domain.Moto;
+import com.example.project_map_curr_location.domain.Moto1;
 import com.yandex.mapkit.GeoObjectCollection;
 import com.yandex.mapkit.MapKit;
 import com.yandex.mapkit.MapKitFactory;
@@ -59,7 +59,7 @@ import java.util.List;
 
 public class YandexMapFragment extends Fragment implements Session.SearchListener, CameraListener {
 
-    private final ArrayList<Moto> motorcycleList;
+    private final List<Moto1> motorcycleList;
 
     private MapView mapView;
 
@@ -93,7 +93,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 //            (start.getLatitude() + end.getLatitude()) / 2,
 //            (start.getLongitude() + end.getLongitude()) / 2);
 
-    public YandexMapFragment(ArrayList<Moto> motorcycleList) {
+    public YandexMapFragment(List<Moto1> motorcycleList) {
         this.motorcycleList = motorcycleList;
     }
 
@@ -159,7 +159,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
     private void printMotos() {
 
-        for (Moto motorcycle: motorcycleList) {
+        for (Moto1 motorcycle: motorcycleList) {
             mapView.getMap().getMapObjects().addPlacemark(new Point(motorcycle.getLatitude(), motorcycle.getLongitude()),ImageProvider.fromResource(getContext(), R.drawable.motopng),
                     new IconStyle().setAnchor(new PointF(0.1f, 0.1f))
                             .setRotationType(RotationType.NO_ROTATION)
