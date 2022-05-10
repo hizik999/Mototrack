@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
         setMotorcycleArrayList();
         setBottomNavigation();
-        RVMotosAdapter rvMotosAdapter = new RVMotosAdapter(this);
+        RVMotosAdapter rvMotosAdapter = new RVMotosAdapter(this, motorcycleArrayList);
         micAndLogin();
 //        sendNotificationStatus();
         et_FindLocation = findViewById(R.id.et_FindLocation);

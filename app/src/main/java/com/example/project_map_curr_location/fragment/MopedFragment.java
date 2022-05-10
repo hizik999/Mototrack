@@ -52,8 +52,10 @@ public class MopedFragment extends Fragment {
             tv_motos.setText("Ты волшебник или как?");
         } else {
             rvMotos.setLayoutManager(new LinearLayoutManager(getContext()));
-            setMotorcycleArrayList();
-            RVMotosAdapter adapter = new RVMotosAdapter(motorcycleArrayList);
+
+            motorcycleArrayList = setMotorcycleArrayList();
+
+            RVMotosAdapter adapter = new RVMotosAdapter(view.getContext(), motorcycleArrayList);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
             rvMotos.setLayoutManager(layoutManager);
             rvMotos.setItemAnimator(new DefaultItemAnimator());
@@ -65,16 +67,18 @@ public class MopedFragment extends Fragment {
 
     }
 
-    private void setMotorcycleArrayList() {
+    private List<Moto1> setMotorcycleArrayList() {
         motorcycleArrayList = new ArrayList<>();
         List<User> userList = new ArrayList<>();
 
-        userList = new UserApiVolley(context).getUsers();
-        motorcycleArrayList = new MotoApiVolley(context).getMoto();
+        userList = new UserApiVolley(getContext()).getUsers();
+        motorcycleArrayList = new MotoApiVolley(getContext()).getMoto();
 
-        Log.d("API_TEST", userList.toString());
-        Log.d("API_TEST", motorcycleArrayList.toString());
 
+        Log.d("API_TEST1", userList.toString());
+        Log.d("API_TEST1", motorcycleArrayList.toString());
+
+        return motorcycleArrayList;
         //motorcycleArrayList.add(new Motorcycle(0,120, 55.6692280, 37.2849931, 0, "Andy"));
 //        motorcycleArrayList.add(new Moto1(0, 120, 37.2849947, 55.6692509, 0, "Andy"));
 //        motorcycleArrayList.add(new Moto1(1, 100, 55.6692569, 37.2849319, 0, "Senya"));

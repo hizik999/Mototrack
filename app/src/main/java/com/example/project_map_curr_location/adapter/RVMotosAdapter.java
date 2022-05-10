@@ -9,22 +9,24 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.collection.ArrayMap;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.project_map_curr_location.MainActivity;
 import com.example.project_map_curr_location.R;
 import com.example.project_map_curr_location.domain.Moto1;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosHolder> {
 
     private Context context;
-    private List<Moto1> motorcycleList = new ArrayList<>();
-    private Map<Integer, String> positions = new ArrayMap<>();
+    private List<Moto1> motorcycleList;
+    private LayoutInflater inflater;
+
+    public RVMotosAdapter(Context context, List<Moto1> motorcycleList) {
+        this.context = context;
+        this.motorcycleList = motorcycleList;
+    }
 
     public RVMotosAdapter(List<Moto1> motorcycleArrayList) {
         this.motorcycleList = motorcycleArrayList;
@@ -57,10 +59,6 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
     @NonNull
     @Override
     public RVMotosHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        context = parent.getContext();
-
-
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_moto, parent, false);
         return new RVMotosHolder(view);
@@ -73,8 +71,12 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
 
     @Override
     public void onBindViewHolder(@NonNull RVMotosHolder holder, @SuppressLint("RecyclerView") int position) {
-        String name = motorcycleList.get(position).getUser().getName();
-        holder.userName.setText(name);
+
+        Moto1 moto = motorcycleList.get(position);
+        ((RVMotosHolder) holder).userName.setText(moto.getUser().getName());
+
+//        String name = motorcycleList.get(position).getUser().getName();
+//        holder.userName.setText(name);
 
 //        String distance = motorcycleList.get(position)
 //        holder.userDistance.setText();

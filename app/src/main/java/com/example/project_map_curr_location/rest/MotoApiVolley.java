@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class MotoApiVolley implements MotoApi {
 
-    public static final String API_TEST = "API_TEST";
+    public static final String API_TEST = "API_TEST_VOLLEY";
     private final Context context;
     public static final String BASE_URL = "http://192.168.1.108:2022";
     private Response.ErrorListener errorListener;
@@ -85,6 +85,7 @@ public class MotoApiVolley implements MotoApi {
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         String url = BASE_URL + "/moto";
+        List<Moto1> motos = new ArrayList<>();
 
         JsonArrayRequest arrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
@@ -99,13 +100,13 @@ public class MotoApiVolley implements MotoApi {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject jsonObject = response.getJSONObject(i);
                                 Moto1 moto = MotoMapper.motoFromJson(jsonObject);
-                                arrayList.add(moto);
+                                motos.add(moto);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
-                        Log.d(API_TEST, arrayList.toString());
+                        Log.d(API_TEST, motos.toString());
                     }
                 },
 
@@ -113,7 +114,7 @@ public class MotoApiVolley implements MotoApi {
         );
 
         requestQueue.add(arrayRequest);
-        return arrayList;
+        return motos;
     }
 
     @Override
