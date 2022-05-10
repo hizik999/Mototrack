@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -13,8 +15,8 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -76,13 +78,18 @@ public class MainActivity extends AppCompatActivity {
 
     private MediaPlayer sound;
 
+    private DataBaseHelper dataBaseHelper;
+    private SQLiteDatabase db;
+    private Cursor cursor;
+    private SimpleCursorAdapter userAdapter;
+
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallBack;
     public static final int DEFAULT_UPDATE_INTERVAL = 30;
     public static final int FASTEST_UPDATE_INTERVAL = 5;
     private static final int PERMISSONS_FINE_LOCATION = 100;
-    private boolean geoStatus = true;
+    private boolean geoStatus;
 
     private static final int request_Code = 101;
 
@@ -92,28 +99,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        geoStatus = true;
         Thread geoThread = new MyTread();
         geoThread.start();
+
+        SQLiteDatabase db = getBaseContext().openOrCreateDatabase("app.db", MODE_PRIVATE, null);
+        dataBaseHelper = new DataBaseHelper(getApplicationContext());
 
         setMotorcycleArrayList();
         setBottomNavigation();
         RVMotosAdapter rvMotosAdapter = new RVMotosAdapter(this, motorcycleArrayList);
         micAndLogin();
-//        sendNotificationStatus();
         et_FindLocation = findViewById(R.id.et_FindLocation);
-
-//        et_FindLocation.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-//                //Toast.makeText(getApplicationContext(), "ААААА" + et_FindLocation.getText(), Toast.LENGTH_SHORT).show();
-//                saveDataString(getString(R.string.findLocationEditText), String.valueOf(et_FindLocation.getText()));
-//                return false;
-//            }
-//
-//
-//        });
-
         et_FindLocation.setHint(R.string.inputAddressEditText);
         et_FindLocation.addTextChangedListener(new TextWatcher() {
             @Override
@@ -146,7 +143,10 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+
+
         new UserApiVolley(this).fillUser();
+        new MotoApiVolley(this, db).fillMoto();
 //        User userById = new UserApiVolley(this).getUserById(1);
 //        Log.d("API_TEST", userById.getName());
 
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 //        new MotoApiVolley(this).addMoto(
 //                new Moto1()
 //        );
-//        new MotoApiVolley(this).fillMoto();
+
 //
     }
 
@@ -441,8 +441,8 @@ public class MainActivity extends AppCompatActivity {
         userList = new UserApiVolley(this).getUsers();
         motorcycleArrayList = new MotoApiVolley(this).getMoto();
 
-        Log.d("API_TEST", userList.toString());
-        Log.d("API_TEST", motorcycleArrayList.toString());
+//        Log.d("API_TEST", userList.toString());
+//        Log.d("API_TEST", motorcycleArrayList.toString());
     }
 
     public void sendNotificationStatus() {

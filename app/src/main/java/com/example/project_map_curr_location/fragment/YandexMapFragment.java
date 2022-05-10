@@ -159,14 +159,14 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
     private void printMotos() {
 
-        for (Moto1 motorcycle: motorcycleList) {
-            mapView.getMap().getMapObjects().addPlacemark(new Point(motorcycle.getLatitude(), motorcycle.getLongitude()),ImageProvider.fromResource(getContext(), R.drawable.motopng),
-                    new IconStyle().setAnchor(new PointF(0.1f, 0.1f))
-                            .setRotationType(RotationType.NO_ROTATION)
-                            .setZIndex(0.5f)
-                            .setScale(0.5f))
-            ;
-        }
+//        for (Moto1 motorcycle: motorcycleList) {
+//            mapView.getMap().getMapObjects().addPlacemark(new Point(motorcycle.getLatitude(), motorcycle.getLongitude()),ImageProvider.fromResource(getContext(), R.drawable.motopng),
+//                    new IconStyle().setAnchor(new PointF(0.1f, 0.1f))
+//                            .setRotationType(RotationType.NO_ROTATION)
+//                            .setZIndex(0.5f)
+//                            .setScale(0.5f))
+//            ;
+//        }
     }
 
     private class MyThread extends Thread{

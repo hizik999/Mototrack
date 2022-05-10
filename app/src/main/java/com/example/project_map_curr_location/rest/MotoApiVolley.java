@@ -1,7 +1,10 @@
 package com.example.project_map_curr_location.rest;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.SimpleCursorAdapter;
 
 import androidx.annotation.Nullable;
 
@@ -13,6 +16,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.project_map_curr_location.DataBaseHelper;
 import com.example.project_map_curr_location.domain.Moto1;
 import com.example.project_map_curr_location.domain.mapper.MotoMapper;
 
@@ -20,7 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +35,13 @@ public class MotoApiVolley implements MotoApi {
     private final Context context;
     public static final String BASE_URL = "http://192.168.1.108:2022";
     private Response.ErrorListener errorListener;
-    private ArrayList<Moto1> arrayList;
+
+    private DataBaseHelper dataBaseHelper;
+    private SQLiteDatabase db;
+    private Cursor cursor;
+    private SimpleCursorAdapter userAdapter;
+
+
 
     public MotoApiVolley(Context context) {
         this.context = context;
@@ -42,7 +52,18 @@ public class MotoApiVolley implements MotoApi {
                 Log.d(API_TEST, error.toString());
             }
         };
-        arrayList = new ArrayList<>();
+    }
+
+    public MotoApiVolley(Context context, SQLiteDatabase db) {
+        this.context = context;
+        this.db = db;
+
+        errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(API_TEST, error.toString());
+            }
+        };
     }
 
     @Override
@@ -64,13 +85,21 @@ public class MotoApiVolley implements MotoApi {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject jsonObject = response.getJSONObject(i);
                                 Moto1 moto = MotoMapper.motoFromJson(jsonObject);
-                                arrayList.add(moto);
+                                long id = moto.getId();
+                                long user_id = moto.getUser().getId();
+                                int speed = moto.getSpeed();
+                                double latitude = moto.getLatitude();
+                                double longitude = moto.getLongitude();
+                                double altitude = moto.getAltitude();
+                                db.execSQL("INSERT INTO moto (id, user_id, speed, latitude, longitude, altitude) " +
+                                        "VALUES (" + id + ", " + user_id + ", " + speed + ", " + latitude + ", " + longitude + ", " + altitude + ")");
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
-                        Log.d(API_TEST, arrayList.toString());
+                        Cursor cursor = db.rawQuery("SELECT * FROM moto", null);
+                        Log.d(API_TEST, Arrays.toString(cursor.getColumnNames()));
                     }
                 },
 
@@ -85,7 +114,6 @@ public class MotoApiVolley implements MotoApi {
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         String url = BASE_URL + "/moto";
-        List<Moto1> motos = new ArrayList<>();
 
         JsonArrayRequest arrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
@@ -100,13 +128,13 @@ public class MotoApiVolley implements MotoApi {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject jsonObject = response.getJSONObject(i);
                                 Moto1 moto = MotoMapper.motoFromJson(jsonObject);
-                                motos.add(moto);
+                                //motos.add(moto);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
-                        Log.d(API_TEST, motos.toString());
+                        //Log.d(API_TEST, motos.toString());
                     }
                 },
 
@@ -114,7 +142,9 @@ public class MotoApiVolley implements MotoApi {
         );
 
         requestQueue.add(arrayRequest);
-        return motos;
+//        Log.d("API_TEST123", motos.toString());
+        //return motos;
+        return null;
     }
 
     @Override

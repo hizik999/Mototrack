@@ -1,11 +1,13 @@
 package com.example.project_map_curr_location.fragment;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,13 +18,12 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.project_map_curr_location.DataBaseHelper;
 import com.example.project_map_curr_location.MainActivity;
 import com.example.project_map_curr_location.R;
 import com.example.project_map_curr_location.adapter.RVMotosAdapter;
 import com.example.project_map_curr_location.domain.Moto1;
 import com.example.project_map_curr_location.domain.User;
-import com.example.project_map_curr_location.rest.MotoApiVolley;
-import com.example.project_map_curr_location.rest.UserApiVolley;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,17 @@ public class MopedFragment extends Fragment {
     private AppCompatButton userShowOnMap;
     private Context context;
     private TextView tv_motos;
+
+    private DataBaseHelper dataBaseHelper;
+    private SQLiteDatabase db;
+    private Cursor cursor;
+    private SimpleCursorAdapter userAdapter;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        dataBaseHelper = new DataBaseHelper(getContext());
+    }
 
     @Nullable
     @Override
@@ -55,6 +67,9 @@ public class MopedFragment extends Fragment {
 
             motorcycleArrayList = setMotorcycleArrayList();
 
+
+
+
             RVMotosAdapter adapter = new RVMotosAdapter(view.getContext(), motorcycleArrayList);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
             rvMotos.setLayoutManager(layoutManager);
@@ -71,12 +86,25 @@ public class MopedFragment extends Fragment {
         motorcycleArrayList = new ArrayList<>();
         List<User> userList = new ArrayList<>();
 
-        userList = new UserApiVolley(getContext()).getUsers();
-        motorcycleArrayList = new MotoApiVolley(getContext()).getMoto();
+//        db = dataBaseHelper.getReadableDatabase();
+//        cursor =  db.rawQuery("SELECT * from moto", null);
+//        String[] headers = new String[] {"id", "user_id", "speed", "latitude", "longitude", "altitude"};
+//        // создаем адаптер, передаем в него курсор
+//        userAdapter = new SimpleCursorAdapter(context, android.R.layout.two_line_list_item,
+//                cursor, headers, new int[]{android.R.id.text1, android.R.id.text2}, 0);
+//        userName.setText("Найдено элементов: " +  cursor.getCount());
+//        userList.setAdapter(userAdapter);
 
 
-        Log.d("API_TEST1", userList.toString());
-        Log.d("API_TEST1", motorcycleArrayList.toString());
+
+//        cursor = db.rawQuery("SELECT * FROM moto", null);
+
+
+        //motorcycleArrayList = new MotoApiVolley(getContext()).getMoto();
+
+//        motorcycleArrayList =
+//        Log.d("API_TEST1", userList.toString());
+//        Log.d("API_TEST1", motorcycleArrayList.toString());
 
         return motorcycleArrayList;
         //motorcycleArrayList.add(new Motorcycle(0,120, 55.6692280, 37.2849931, 0, "Andy"));
@@ -85,4 +113,6 @@ public class MopedFragment extends Fragment {
 //        motorcycleArrayList.add(new Moto1(2, 80, 55.6692579, 37.2849319, 0, "Denis"));
         //motorcycleArrayList.add(new Moto1(0, userList.get(1), 37, 55.66925, 3.4354, 21.32));
     }
+
+//    private List<Moto1>
 }

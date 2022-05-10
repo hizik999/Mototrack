@@ -2,15 +2,19 @@ package com.example.project_map_curr_location.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.project_map_curr_location.DataBaseHelper;
 import com.example.project_map_curr_location.MainActivity;
 import com.example.project_map_curr_location.R;
 import com.example.project_map_curr_location.domain.Moto1;
@@ -22,6 +26,11 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
     private Context context;
     private List<Moto1> motorcycleList;
     private LayoutInflater inflater;
+
+    private DataBaseHelper dataBaseHelper;
+    private SQLiteDatabase db;
+    private Cursor cursor;
+    private SimpleCursorAdapter userAdapter;
 
     public RVMotosAdapter(Context context, List<Moto1> motorcycleList) {
         this.context = context;
@@ -50,9 +59,8 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
             userDistance = itemView.findViewById(R.id.userDistance);
             userSpeed = itemView.findViewById(R.id.userSpeed);
             userShowOnMap = itemView.findViewById(R.id.userShowOnMap);
-
-
         }
+
 
     }
 
@@ -74,6 +82,7 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
 
         Moto1 moto = motorcycleList.get(position);
         ((RVMotosHolder) holder).userName.setText(moto.getUser().getName());
+
 
 //        String name = motorcycleList.get(position).getUser().getName();
 //        holder.userName.setText(name);
