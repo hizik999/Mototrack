@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.project_map_curr_location.DataBaseHelper;
 import com.example.project_map_curr_location.MainActivity;
 import com.example.project_map_curr_location.R;
 import com.example.project_map_curr_location.domain.Moto1;
@@ -81,7 +82,10 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
     private SearchManager searchManager;
     private Session searchSession;
 
+    private DataBaseHelper dataBaseHelper;
 
+    private boolean thread;
+    private MyThread myThread = new MyThread();
 
 //    private TrafficLevel trafficLevel = null;
 //    private enum TrafficFreshness {Loading, OK, Expired};
@@ -104,6 +108,9 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         SearchFactory.initialize(getContext());
         super.onCreate(savedInstanceState);
         context = getContext();
+        thread = true;
+
+
     }
 
     @Override
@@ -130,7 +137,8 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
             submitQuery(text);
 
             if (((MainActivity) context).loadDataInt(getString(R.string.car_or_moto)) == 0){
-
+//                myThread.setDaemon(true);
+//                myThread.run();
                 printMotos();
             }
 
@@ -142,6 +150,8 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         double lon = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon));
         mapView.getMap().move(new CameraPosition(
                 new Point(lat, lon), 14, 0, 0));
+
+
 
         return mainView;
     }
@@ -158,26 +168,37 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
     }
 
     private void printMotos() {
+        dataBaseHelper = new DataBaseHelper(getContext());
 
-//        for (Moto1 motorcycle: motorcycleList) {
-//            mapView.getMap().getMapObjects().addPlacemark(new Point(motorcycle.getLatitude(), motorcycle.getLongitude()),ImageProvider.fromResource(getContext(), R.drawable.motopng),
-//                    new IconStyle().setAnchor(new PointF(0.1f, 0.1f))
-//                            .setRotationType(RotationType.NO_ROTATION)
-//                            .setZIndex(0.5f)
-//                            .setScale(0.5f))
-//            ;
-//        }
+        List<Moto1> list = dataBaseHelper.getAllMoto();
+        for (Moto1 moto : list){
+        mapView.getMap().getMapObjects().addPlacemark(new Point(moto.getLatitude(), moto.getLongitude()),ImageProvider.fromResource(getContext(), R.drawable.motopng),
+                new IconStyle().setAnchor(new PointF(0.1f, 0.1f))
+                        .setRotationType(RotationType.NO_ROTATION)
+                        .setZIndex(0.5f)
+                        .setScale(0.5f))
+                ;
+        }
     }
 
     private class MyThread extends Thread{
 
         @Override
         public void run() {
-//            super.run();
-
+            //super.run();
+            while (thread){
+                try {
+                    printMotos();
+                    sleep(2 * 1000);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
 
 
         }
+
+
     }
 
     private void submitQuery(String query) {
@@ -226,13 +247,14 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         UserLocationObjectListener listener = new UserLocationObjectListener() {
             @Override
             public void onObjectAdded(@NonNull UserLocationView userLocationView) {
-
+                //printMotos();
                 userLocationLayer.setAnchor(
                         new PointF((float)(mapView.getWidth() * 0.5), (float)(mapView.getHeight() * 0.5)),
                         new PointF((float)(mapView.getWidth() * 0.5), (float)(mapView.getHeight() * 0.83)));
 
                 userLocationView.getArrow().setIcon(ImageProvider.fromResource(
                         context, R.drawable.user_arrow));
+
 
 //                CompositeIcon pinIcon = userLocationView.getPin().useCompositeIcon();
 
@@ -286,21 +308,36 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
     public void onPause() {
         mapView.onStop();
         MapKitFactory.getInstance().onStop();
+        thread = false;
         super.onPause();
+
+        if (myThread != null){
+            Thread dummy = myThread;
+            myThread = null;
+            dummy.interrupt();
+        }
     }
 
 //search, suggest, jams
     @Override
     public void onStop() {
         mapView.onStop();
+        thread = false;
         MapKitFactory.getInstance().onStop();
 
         super.onStop();
+
+        if (myThread != null){
+            Thread dummy = myThread;
+            myThread = null;
+            dummy.interrupt();
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        thread = true;
         MapKitFactory.getInstance().onStart();
 
         mapView.onStart();
@@ -322,6 +359,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         DrivingSession.DrivingRouteListener drivingRouteListener = new DrivingSession.DrivingRouteListener() {
             @Override
             public void onDrivingRoutes(@NonNull List<DrivingRoute> list) {
+
                 int i = 0;
                 for (DrivingRoute route : list) {
                     mapObjects.addPlacemark(tripEnd).setIcon(ImageProvider.fromResource(context, R.drawable.search_result),
@@ -350,6 +388,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
             }
         };
         drivingSession = drivingRouter.requestRoutes(requestPoints, drivingOptions, vehicleOptions, drivingRouteListener);
+        //printMotos();
     }
 
 

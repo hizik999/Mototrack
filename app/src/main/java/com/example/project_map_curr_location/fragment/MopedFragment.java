@@ -23,7 +23,6 @@ import com.example.project_map_curr_location.MainActivity;
 import com.example.project_map_curr_location.R;
 import com.example.project_map_curr_location.adapter.RVMotosAdapter;
 import com.example.project_map_curr_location.domain.Moto1;
-import com.example.project_map_curr_location.rest.MotoApiVolley;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,9 +70,10 @@ public class MopedFragment extends Fragment {
             List<Moto1> moto = new ArrayList<>();
 
 
-            new MotoApiVolley(getContext()).fillMoto();
+
             moto = dataBaseHelper.getAllMoto();
 
+            tv_motos.setText(getString(R.string.motos_count) + ":" + " " + moto.size());
 
             RVMotosAdapter adapter = new RVMotosAdapter(view.getContext(), moto);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -82,7 +82,7 @@ public class MopedFragment extends Fragment {
             rvMotos.setAdapter(adapter);
 
 
-            tv_motos.setText(getString(R.string.motos_count) + ":" + " " + moto.size());
+
         }
 
     }

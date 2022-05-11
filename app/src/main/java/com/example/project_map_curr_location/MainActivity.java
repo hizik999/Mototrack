@@ -39,6 +39,7 @@ import com.example.project_map_curr_location.fragment.FakeMopedFragment;
 import com.example.project_map_curr_location.fragment.MopedFragment;
 import com.example.project_map_curr_location.fragment.SettingsFragment3;
 import com.example.project_map_curr_location.fragment.YandexMapFragment;
+import com.example.project_map_curr_location.rest.MotoApiVolley;
 import com.example.project_map_curr_location.rest.UserApiVolley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int FASTEST_UPDATE_INTERVAL = 5;
     private static final int PERMISSONS_FINE_LOCATION = 100;
     private boolean geoStatus;
+    private Thread geoThread = new MyTread();
 
     private static final int request_Code = 101;
 
@@ -99,11 +101,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         geoStatus = true;
-        Thread geoThread = new MyTread();
-        geoThread.start();
-
         SQLiteDatabase db = getBaseContext().openOrCreateDatabase("app1.db", MODE_PRIVATE, null);
         dataBaseHelper = new DataBaseHelper(getApplicationContext());
+        Thread geoThread = new MyTread();
+        geoThread.setDaemon(true);
+        geoThread.start();
+
+
 
         setMotorcycleArrayList();
         setBottomNavigation();
@@ -164,6 +168,12 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         saveDataInt(getString(R.string.car_or_moto), 1);
         geoStatus = false;
+        if (geoThread != null){
+            Thread dummy = geoThread;
+            geoThread = null;
+            dummy.interrupt();
+        }
+
     }
 
     private class MyTread extends Thread {
@@ -174,8 +184,9 @@ public class MainActivity extends AppCompatActivity {
             while (geoStatus) {
                 try {
                     updateGPS();
+                    new MotoApiVolley(MainActivity.this).fillMoto();
                     try {
-                        sleep(1 * 5000);
+                        sleep(3 * 1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
