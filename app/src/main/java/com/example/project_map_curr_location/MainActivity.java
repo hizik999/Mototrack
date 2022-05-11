@@ -39,7 +39,6 @@ import com.example.project_map_curr_location.fragment.FakeMopedFragment;
 import com.example.project_map_curr_location.fragment.MopedFragment;
 import com.example.project_map_curr_location.fragment.SettingsFragment3;
 import com.example.project_map_curr_location.fragment.YandexMapFragment;
-import com.example.project_map_curr_location.rest.MotoApiVolley;
 import com.example.project_map_curr_location.rest.UserApiVolley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -103,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         Thread geoThread = new MyTread();
         geoThread.start();
 
-        SQLiteDatabase db = getBaseContext().openOrCreateDatabase("app.db", MODE_PRIVATE, null);
+        SQLiteDatabase db = getBaseContext().openOrCreateDatabase("app1.db", MODE_PRIVATE, null);
         dataBaseHelper = new DataBaseHelper(getApplicationContext());
 
         setMotorcycleArrayList();
@@ -143,8 +142,10 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        new DataBaseHelper(this).onCreate(db);
 
-        new MotoApiVolley(this).fillMoto();
+        //db.execSQL("DROP TABLE IF EXISTS moto ");
+//        new MotoApiVolley(this).fillMoto();
 //        new UserApiVolley(this).fillUser();
 //        new MotoApiVolley(this, db).fillMoto();
 //        User userById = new UserApiVolley(this).getUserById(1);
@@ -385,7 +386,11 @@ public class MainActivity extends AppCompatActivity {
         fragment_fake_moped = new FakeMopedFragment();
 
         curr_fragment = fragment_map;
+
+
+
         loadFragment(curr_fragment);
+
 
         bottomNavigation = findViewById(R.id.bottom_navigation);
         bottomNavigation.add(new MeowBottomNavigation.Model(1, R.drawable.ic_settings));
@@ -398,12 +403,15 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getId()) {
                     case 1:
+                        //new MotoApiVolley(MainActivity.this).fillMoto();
                         curr_fragment = fragment_settings;
                         break;
                     case 2:
+                        //new MotoApiVolley(MainActivity.this).fillMoto();
                         curr_fragment = fragment_map;
                         break;
                     case 3:
+                        //new MotoApiVolley(MainActivity.this).fillMoto();
                         if (loadDataInt(getString(R.string.car_or_moto)) == 1) {
                             curr_fragment = fragment_fake_moped;
                         } else {
@@ -439,7 +447,8 @@ public class MainActivity extends AppCompatActivity {
         List<User> userList = new ArrayList<>();
 
         userList = new UserApiVolley(this).getUsers();
-        motorcycleArrayList = new MotoApiVolley(this).getMoto();
+
+        //new MotoApiVolley(this).fillMoto();
 
 //        Log.d("API_TEST", userList.toString());
 //        Log.d("API_TEST", motorcycleArrayList.toString());

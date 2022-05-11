@@ -80,7 +80,7 @@ public class MotoApiVolley implements MotoApi {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-
+                        dataBaseHelper.dropTableMoto();
                         try {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject jsonObject = response.getJSONObject(i);

@@ -23,6 +23,7 @@ import com.example.project_map_curr_location.MainActivity;
 import com.example.project_map_curr_location.R;
 import com.example.project_map_curr_location.adapter.RVMotosAdapter;
 import com.example.project_map_curr_location.domain.Moto1;
+import com.example.project_map_curr_location.rest.MotoApiVolley;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,7 @@ public class MopedFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_moped, null, false);
+
         return view;
     }
 
@@ -64,33 +66,12 @@ public class MopedFragment extends Fragment {
         } else {
             rvMotos.setLayoutManager(new LinearLayoutManager(getContext()));
 
-            //motorcycleArrayList = setMotorcycleArrayList();
 
-//            motorcycleArrayList.add(new Moto1(new User("Andy", "asd", "asndj123", "moto"), 90, 21.4354, 24.5435, 232.5334));
-
-            //Cursor c = db.query("moto", new String[]{"id", "user_id", "speed", "latitude", "longitude", "altitude"}, null, null, null, null, null);
-            //Cursor c = db.rawQuery("SELECT * FROM moto", );
-
-
-
-//            if (c!= null && c.moveToFirst()){
-//                do{
-//
-//                    long id = c.getLong(c.getColumnIndexOrThrow("id"));
-//                    User user = new User("Andy", "asd", "asndj123", "moto");
-//                    int speed = c.getInt(c.getColumnIndexOrThrow("speed"));
-//                    double latitude = c.getDouble(c.getColumnIndexOrThrow("latitude"));
-//                    double longitude = c.getDouble(c.getColumnIndexOrThrow("longitude"));
-//                    double altitude = c.getDouble(c.getColumnIndexOrThrow("altitude"));
-//
-//                    Moto1 moto = new Moto1(id, user, speed, latitude, longitude, altitude);
-//                    motorcycleArrayList.add(moto);
-//                } while (c.moveToNext());
-//            }
-
-
-            dataBaseHelper = new DataBaseHelper(context);
+            dataBaseHelper = new DataBaseHelper(getContext());
             List<Moto1> moto = new ArrayList<>();
+
+
+            new MotoApiVolley(getContext()).fillMoto();
             moto = dataBaseHelper.getAllMoto();
 
 

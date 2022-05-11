@@ -16,21 +16,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "app.db"; // название бд
+    private static final String DATABASE_NAME = "app1.db"; // название бд
     private static final int SCHEMA = 1; // версия базы данных
+    private Context context;
+
 
     public DataBaseHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, "app.db", null, 1);
+        super(context, "app1.db", null, 1);
     }
 
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, SCHEMA);
+        this.context = context;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("DROP TABLE IF EXISTS moto");
-        String createTableMotoStatement = "CREATE TABLE moto (id NUMERIC, " +
+//        db.execSQL("DELETE FROM moto");
+        String createTableMotoStatement = "CREATE TABLE IF NOT EXISTS moto (id NUMERIC, " +
                 "user_id NUMERIC, speed INTEGER, latitude VARCHAR, longitude VARCHAR, altitude VARCHAR)";
         db.execSQL(createTableMotoStatement);
 
@@ -59,15 +62,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         long insert = db.insert("moto", null, cv);
 
+        db.close();
         return insert != -1;
     }
 
     public List<Moto1> getAllMoto() {
 
+        //dropTableMoto();
         List<Moto1> list = new ArrayList<>();
 
         String query = "SELECT * FROM moto";
-
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
@@ -81,9 +85,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 double longitude = cursor.getDouble(4);
                 double altitude = cursor.getDouble(5);
 
-                Moto1 moto = new Moto1(id, speed, latitude, longitude, altitude);
+                Moto1 moto = new Moto1(id, null, speed, latitude, longitude, altitude);
                 list.add(moto);
                 Log.d("DB_ADD_MOTO", "true");
+                Log.d("DB_ADD_MOTO", moto.toString());
             } while (cursor.moveToNext());
 
         } else {
@@ -93,5 +98,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return list;
+    }
+
+    public void dropTableMoto() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE moto");
+        String createTableMotoStatement = "CREATE TABLE moto (id NUMERIC, " +
+                "user_id NUMERIC, speed INTEGER, latitude VARCHAR, longitude VARCHAR, altitude VARCHAR)";
+        db.execSQL(createTableMotoStatement);
     }
 }
