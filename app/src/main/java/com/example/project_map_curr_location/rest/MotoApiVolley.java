@@ -24,16 +24,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MotoApiVolley implements MotoApi {
 
     public static final String API_TEST = "API_TEST_VOLLEY";
     private final Context context;
-    public static final String BASE_URL = "http://192.168.1.108:2022";
+    public static final String BASE_URL = "http://192.168.1.110:2022";
     private Response.ErrorListener errorListener;
 
     private DataBaseHelper dataBaseHelper;
@@ -72,48 +70,7 @@ public class MotoApiVolley implements MotoApi {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         String url = BASE_URL + "/moto";
 
-        JsonArrayRequest arrayRequest = new JsonArrayRequest(
-                Request.Method.GET,
-                url,
-                null,
-
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-
-                        try {
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject jsonObject = response.getJSONObject(i);
-                                Moto1 moto = MotoMapper.motoFromJson(jsonObject);
-                                long id = moto.getId();
-                                long user_id = moto.getUser().getId();
-                                int speed = moto.getSpeed();
-                                double latitude = moto.getLatitude();
-                                double longitude = moto.getLongitude();
-                                double altitude = moto.getAltitude();
-                                db.execSQL("INSERT INTO moto (id, user_id, speed, latitude, longitude, altitude) " +
-                                        "VALUES (" + id + ", " + user_id + ", " + speed + ", " + latitude + ", " + longitude + ", " + altitude + ")");
-
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Cursor cursor = db.rawQuery("SELECT * FROM moto", null);
-                        Log.d(API_TEST, Arrays.toString(cursor.getColumnNames()));
-                    }
-                },
-
-                errorListener
-        );
-
-        requestQueue.add(arrayRequest);
-    }
-
-    @Override
-    public List<Moto1> getMoto() {
-
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        String url = BASE_URL + "/moto";
+        dataBaseHelper = new DataBaseHelper(context);
 
         JsonArrayRequest arrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
@@ -128,13 +85,26 @@ public class MotoApiVolley implements MotoApi {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject jsonObject = response.getJSONObject(i);
                                 Moto1 moto = MotoMapper.motoFromJson(jsonObject);
-                                //motos.add(moto);
+
+                                boolean success = dataBaseHelper.addOne(moto);
+                                Log.d("API_TEST_VOLLEY", String.valueOf(success));
+                                //Toast.makeText(context, String.valueOf(success), Toast.LENGTH_SHORT);
+//                                long id = moto.getId();
+//                                long user_id = moto.getUser().getId();
+//                                int speed = moto.getSpeed();
+//                                double latitude = moto.getLatitude();
+//                                double longitude = moto.getLongitude();
+//                                double altitude = moto.getAltitude();
+
+//                                db.execSQL("INSERT INTO moto (id, user_id, speed, latitude, longitude, altitude) " +
+//                                        "VALUES (" + id + ", " + user_id + ", " + speed + ", " + latitude + ", " + longitude + ", " + altitude + ")");
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
-                        //Log.d(API_TEST, motos.toString());
+//                        Cursor cursor = db.rawQuery("SELECT * FROM moto", null);
+//                        Log.d(API_TEST, Arrays.toString(cursor.getColumnNames()));
                     }
                 },
 
@@ -142,9 +112,6 @@ public class MotoApiVolley implements MotoApi {
         );
 
         requestQueue.add(arrayRequest);
-//        Log.d("API_TEST123", motos.toString());
-        //return motos;
-        return null;
     }
 
     @Override

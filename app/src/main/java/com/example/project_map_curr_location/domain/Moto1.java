@@ -18,6 +18,14 @@ public class Moto1 {
         this.altitude = altitude;
     }
 
+    public Moto1(long id, int speed, double latitude, double longitude, double altitude) {
+        this.id = id;
+        this.speed = speed;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.altitude = altitude;
+    }
+
     public Moto1(User user, int speed, double latitude, double longitude, double altitude) {
         this.user = user;
         this.speed = speed;

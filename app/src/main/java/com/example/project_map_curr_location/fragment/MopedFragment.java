@@ -23,7 +23,6 @@ import com.example.project_map_curr_location.MainActivity;
 import com.example.project_map_curr_location.R;
 import com.example.project_map_curr_location.adapter.RVMotosAdapter;
 import com.example.project_map_curr_location.domain.Moto1;
-import com.example.project_map_curr_location.domain.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,7 @@ import java.util.List;
 public class MopedFragment extends Fragment {
 
     private RecyclerView rvMotos;
-    private List<Moto1> motorcycleArrayList;
+
     private AppCompatButton userShowOnMap;
     private Context context;
     private TextView tv_motos;
@@ -44,7 +43,7 @@ public class MopedFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dataBaseHelper = new DataBaseHelper(getContext());
+        //dataBaseHelper = new DataBaseHelper(getContext());
     }
 
     @Nullable
@@ -65,26 +64,51 @@ public class MopedFragment extends Fragment {
         } else {
             rvMotos.setLayoutManager(new LinearLayoutManager(getContext()));
 
-            motorcycleArrayList = setMotorcycleArrayList();
+            //motorcycleArrayList = setMotorcycleArrayList();
+
+//            motorcycleArrayList.add(new Moto1(new User("Andy", "asd", "asndj123", "moto"), 90, 21.4354, 24.5435, 232.5334));
+
+            //Cursor c = db.query("moto", new String[]{"id", "user_id", "speed", "latitude", "longitude", "altitude"}, null, null, null, null, null);
+            //Cursor c = db.rawQuery("SELECT * FROM moto", );
 
 
 
+//            if (c!= null && c.moveToFirst()){
+//                do{
+//
+//                    long id = c.getLong(c.getColumnIndexOrThrow("id"));
+//                    User user = new User("Andy", "asd", "asndj123", "moto");
+//                    int speed = c.getInt(c.getColumnIndexOrThrow("speed"));
+//                    double latitude = c.getDouble(c.getColumnIndexOrThrow("latitude"));
+//                    double longitude = c.getDouble(c.getColumnIndexOrThrow("longitude"));
+//                    double altitude = c.getDouble(c.getColumnIndexOrThrow("altitude"));
+//
+//                    Moto1 moto = new Moto1(id, user, speed, latitude, longitude, altitude);
+//                    motorcycleArrayList.add(moto);
+//                } while (c.moveToNext());
+//            }
 
-            RVMotosAdapter adapter = new RVMotosAdapter(view.getContext(), motorcycleArrayList);
+
+            dataBaseHelper = new DataBaseHelper(context);
+            List<Moto1> moto = new ArrayList<>();
+            moto = dataBaseHelper.getAllMoto();
+
+
+            RVMotosAdapter adapter = new RVMotosAdapter(view.getContext(), moto);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
             rvMotos.setLayoutManager(layoutManager);
             rvMotos.setItemAnimator(new DefaultItemAnimator());
             rvMotos.setAdapter(adapter);
 
 
-            tv_motos.setText(getString(R.string.motos_count) + ":" + " " + motorcycleArrayList.size());
+            tv_motos.setText(getString(R.string.motos_count) + ":" + " " + moto.size());
         }
 
     }
 
-    private List<Moto1> setMotorcycleArrayList() {
-        motorcycleArrayList = new ArrayList<>();
-        List<User> userList = new ArrayList<>();
+//    private List<Moto1> setMotorcycleArrayList() {
+//        motorcycleArrayList = new ArrayList<>();
+//        List<User> userList = new ArrayList<>();
 
 //        db = dataBaseHelper.getReadableDatabase();
 //        cursor =  db.rawQuery("SELECT * from moto", null);
@@ -103,16 +127,16 @@ public class MopedFragment extends Fragment {
         //motorcycleArrayList = new MotoApiVolley(getContext()).getMoto();
 
 //        motorcycleArrayList =
-//        Log.d("API_TEST1", userList.toString());
-//        Log.d("API_TEST1", motorcycleArrayList.toString());
-
-        return motorcycleArrayList;
-        //motorcycleArrayList.add(new Motorcycle(0,120, 55.6692280, 37.2849931, 0, "Andy"));
-//        motorcycleArrayList.add(new Moto1(0, 120, 37.2849947, 55.6692509, 0, "Andy"));
-//        motorcycleArrayList.add(new Moto1(1, 100, 55.6692569, 37.2849319, 0, "Senya"));
-//        motorcycleArrayList.add(new Moto1(2, 80, 55.6692579, 37.2849319, 0, "Denis"));
-        //motorcycleArrayList.add(new Moto1(0, userList.get(1), 37, 55.66925, 3.4354, 21.32));
-    }
+////        Log.d("API_TEST1", userList.toString());
+////        Log.d("API_TEST1", motorcycleArrayList.toString());
+//
+//        return motorcycleArrayList;
+//        //motorcycleArrayList.add(new Motorcycle(0,120, 55.6692280, 37.2849931, 0, "Andy"));
+////        motorcycleArrayList.add(new Moto1(0, 120, 37.2849947, 55.6692509, 0, "Andy"));
+////        motorcycleArrayList.add(new Moto1(1, 100, 55.6692569, 37.2849319, 0, "Senya"));
+////        motorcycleArrayList.add(new Moto1(2, 80, 55.6692579, 37.2849319, 0, "Denis"));
+//        //motorcycleArrayList.add(new Moto1(0, userList.get(1), 37, 55.66925, 3.4354, 21.32));
+//    }
 
 //    private List<Moto1>
 }

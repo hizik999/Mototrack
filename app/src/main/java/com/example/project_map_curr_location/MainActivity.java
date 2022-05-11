@@ -144,9 +144,9 @@ public class MainActivity extends AppCompatActivity {
         };
 
 
-
-        new UserApiVolley(this).fillUser();
-        new MotoApiVolley(this, db).fillMoto();
+        new MotoApiVolley(this).fillMoto();
+//        new UserApiVolley(this).fillUser();
+//        new MotoApiVolley(this, db).fillMoto();
 //        User userById = new UserApiVolley(this).getUserById(1);
 //        Log.d("API_TEST", userById.getName());
 
