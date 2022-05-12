@@ -85,7 +85,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
     private DataBaseHelper dataBaseHelper;
 
     private boolean thread;
-    private MyThread myThread = new MyThread();
+    private MyThread123 myThread = new MyThread123();
 
 //    private TrafficLevel trafficLevel = null;
 //    private enum TrafficFreshness {Loading, OK, Expired};
@@ -137,8 +137,8 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
             submitQuery(text);
 
             if (((MainActivity) context).loadDataInt(getString(R.string.car_or_moto)) == 0){
-//                myThread.setDaemon(true);
-//                myThread.run();
+                //myThread.setDaemon(true);
+                //myThread.run();
                 printMotos();
             }
 
@@ -181,11 +181,11 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         }
     }
 
-    private class MyThread extends Thread{
+    private class MyThread123 extends Thread{
 
         @Override
         public void run() {
-            //super.run();
+            super.run();
             while (thread){
                 try {
                     printMotos();

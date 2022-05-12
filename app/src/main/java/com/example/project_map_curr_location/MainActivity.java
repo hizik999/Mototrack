@@ -184,7 +184,9 @@ public class MainActivity extends AppCompatActivity {
             while (geoStatus) {
                 try {
                     updateGPS();
-                    new MotoApiVolley(MainActivity.this).fillMoto();
+                    if (loadDataInt(getString(R.string.car_or_moto)) == 0){
+                        new MotoApiVolley(MainActivity.this).fillMoto();
+                    }
                     try {
                         sleep(3 * 1000);
                     } catch (InterruptedException e) {
