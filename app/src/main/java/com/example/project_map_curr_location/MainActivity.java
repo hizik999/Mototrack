@@ -32,6 +32,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
 import com.example.project_map_curr_location.adapter.RVMotosAdapter;
+import com.example.project_map_curr_location.database.DataBaseHelper;
 import com.example.project_map_curr_location.domain.Moto1;
 import com.example.project_map_curr_location.domain.User;
 import com.example.project_map_curr_location.fragment.AccountFragment;
@@ -268,6 +269,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //тут не аккаунт, а настройки ((мне впадлу переписывать сори))
+
         fragment_account = new AccountFragment();
         btn_login = findViewById(R.id.btn_login);
         btn_login.setOnClickListener(new View.OnClickListener() {
@@ -278,8 +281,7 @@ public class MainActivity extends AppCompatActivity {
                     loadFragment(curr_fragment);
                     bottomNavigation.show(2, true);
                 } else {
-                    curr_fragment = fragment_account;
-                    loadFragment(curr_fragment);
+                    loadSettings();
                 }
             }
         });

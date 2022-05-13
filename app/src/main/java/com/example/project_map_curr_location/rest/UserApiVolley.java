@@ -111,11 +111,10 @@ public class UserApiVolley implements UserApi{
     }
 
     @Override
-    public User getUserById(long id) {
+    public void getUserById(long id) {
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         String url = BASE_URL + "/user/" + 1;
-        //List<User> list = new ArrayList<>();
         JsonArrayRequest arrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 url,
@@ -130,7 +129,7 @@ public class UserApiVolley implements UserApi{
                 errorListener
         );
         requestQueue.add(arrayRequest);
-        return arrayList.get(1);
+
     }
 
     @Override

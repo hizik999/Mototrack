@@ -1,4 +1,4 @@
-package com.example.project_map_curr_location;
+package com.example.project_map_curr_location.database;
 
 
 import android.content.ContentValues;
@@ -11,6 +11,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.example.project_map_curr_location.domain.Moto1;
+import com.example.project_map_curr_location.domain.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 //        db.execSQL("DELETE FROM moto");
         String createTableMotoStatement = "CREATE TABLE IF NOT EXISTS moto (id NUMERIC, " +
                 "user_id NUMERIC, speed INTEGER, latitude VARCHAR, longitude VARCHAR, altitude VARCHAR)";
+        String createTableUserStatement = "CREATE TABLE IF NOT EXISTS user (id NUMERIC, " +
+                "name VARCHAR, nickname VARCHAR, email VARCHAR, status VARCHAR)";
+
         db.execSQL(createTableMotoStatement);
+        db.execSQL(createTableUserStatement);
 
 //        db.execSQL("CREATE TABLE IF NOT EXISTS moto (id NUMERIC PRIMARY KEY AUTOINCREMENT, " +
 //                "user_id NUMERIC, speed INTEGER, latitude VARCHAR, longitude VARCHAR, altitude VARCHAR)");
@@ -45,6 +50,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS moto");
+        db.execSQL("DROP TABLE IF EXISTS user");
         onCreate(db);
     }
 
@@ -106,5 +112,75 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         String createTableMotoStatement = "CREATE TABLE moto (id NUMERIC, " +
                 "user_id NUMERIC, speed INTEGER, latitude VARCHAR, longitude VARCHAR, altitude VARCHAR)";
         db.execSQL(createTableMotoStatement);
+    }
+
+    public void dropTableUser() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE user");
+        String createTableUserStatement = "CREATE TABLE IF NOT EXISTS user (id NUMERIC, " +
+                "name VARCHAR, nickname VARCHAR, email VARCHAR, status VARCHAR)";
+        db.execSQL(createTableUserStatement);
+    }
+
+    public List<User> getAllUser() {
+
+        List<User> list = new ArrayList<>();
+
+        String query = "SELECT * FROM user";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+
+            do{
+                long id = cursor.getLong(0);
+                String name = cursor.getString(1);
+                String nickname = cursor.getString(2);
+                String email = cursor.getString(3);
+                String status = cursor.getString(4);
+
+
+                User user = new User(id, name, nickname, email, status);
+                list.add(user);
+                Log.d("DB_ADD_USER", "true");
+                Log.d("DB_ADD_USER", user.toString());
+            } while (cursor.moveToNext());
+
+        } else {
+            Log.d("DB_ADD_USER", "false");
+        }
+
+        cursor.close();
+        db.close();
+        return list;
+    }
+
+    public User getUSerById(long id){
+
+        String query = "SELECT name, nickname, email, status FROM user WHERE id = " + id;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        User user = null;
+
+        if (cursor.moveToFirst()){
+            if (cursor.moveToFirst()) {
+                do{
+                    String name = cursor.getString(0);
+                    String nickname = cursor.getString(1);
+                    String email = cursor.getString(2);
+                    String status = cursor.getString(3);
+
+
+                    user = new User(id, name, nickname, email, status);
+                    Log.d("DB_ADD_USER", "true");
+                    Log.d("DB_ADD_USER", user.toString());
+                } while (cursor.moveToNext());
+
+            } else {
+                Log.d("DB_ADD_USER", "false");
+            }
+        }
+
+        return user;
     }
 }

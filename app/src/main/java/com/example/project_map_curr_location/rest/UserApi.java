@@ -10,7 +10,7 @@ public interface UserApi {
 
     List<User> getUsers();
 
-    User getUserById(long id);
+    void getUserById(long id);
 
     void addUser(User user);
 

@@ -37,10 +37,11 @@
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/btn_login"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_baseline_account_circle_24"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="40"
+                    android:src="@drawable/white_settings"
+
                     android:layout_gravity="center"
                     android:backgroundTint="@color/color3"
                     />
@@ -50,7 +51,7 @@
                     android:id="@+id/et_FindLocation"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="15"
+                    android:layout_weight="10"
                     android:layout_gravity="center"
                     android:inputType="text"
                     android:background="@drawable/layout_round_button"
@@ -58,9 +59,10 @@
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/btn_findLocationMicro"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="40"
                     android:src="@drawable/ic_baseline_mic_24"
                     android:layout_gravity="center"
                     android:backgroundTint="@color/color3"
