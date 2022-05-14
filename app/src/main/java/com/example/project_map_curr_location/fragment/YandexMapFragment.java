@@ -93,6 +93,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
     private Handler handler = new Handler(Looper.getMainLooper());
 
     private PlacemarkMapObject placemarkMapObject;
+
 //    private TrafficLevel trafficLevel = null;
 //    private enum TrafficFreshness {Loading, OK, Expired};
 //    private TrafficFreshness trafficFreshness;
@@ -145,6 +146,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
             if (((MainActivity) context).loadDataInt(getString(R.string.car_or_moto)) == 0) {
 
                 myThread = new MyThread123();
+                thread = true;
                 myThread.setDaemon(true);
                 myThread.start();
             }
@@ -170,12 +172,12 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
     }
 
-    private void printMotos() {
+    private List<PlacemarkMapObject> printMotos() {
         dataBaseHelper = new DataBaseHelper(getContext());
 
         List<Moto1> list = dataBaseHelper.getAllMoto();
 
-        //List<PlacemarkMapObject> placemarkMapObjects = new ArrayList<>();
+        List<PlacemarkMapObject> placemarkMapObjects = new ArrayList<>();
 
         for (Moto1 moto : list) {
 
@@ -187,8 +189,8 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
                                 .setRotationType(RotationType.NO_ROTATION)
                                 .setZIndex(0.5f)
                                 .setScale(0.5f));
-                //placemarkMapObjects.add(placemarkMapObject);
-            } catch (Exception e){
+                placemarkMapObjects.add(placemarkMapObject);
+            } catch (Exception e) {
                 Log.d("DELETE_PLACEMARK", e.getMessage());
             }
 
@@ -198,7 +200,14 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 //                Log.d("DELETE_PLACEMARK", e.getMessage());
 //            }
         }
+        return placemarkMapObjects;
+    }
 
+    private void deleteMotos(List<PlacemarkMapObject> placemarkMapObjects) {
+
+        for (PlacemarkMapObject marker : placemarkMapObjects) {
+            marker.setVisible(false);
+        }
     }
 
 //    private void printMotosAAA() {
@@ -218,14 +227,22 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
     private class MyThread123 extends Thread {
 
+        private List<PlacemarkMapObject> placemarkMapObjects123;
+
         @Override
         public void run() {
             //super.run();
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
-                    printMotos();
+                    placemarkMapObjects123 = printMotos();
 
+                }
+            };
+            Runnable runnable1 = new Runnable() {
+                @Override
+                public void run() {
+                    deleteMotos(placemarkMapObjects123);
                 }
             };
             while (thread) {
@@ -233,6 +250,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
                     handler.post(runnable);
                     sleep(4 * 1000);
+                    handler.post(runnable1);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
