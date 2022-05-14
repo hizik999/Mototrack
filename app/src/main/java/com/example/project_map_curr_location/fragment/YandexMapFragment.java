@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 
 import com.example.project_map_curr_location.database.DataBaseHelper;
@@ -93,6 +94,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
     private Handler handler = new Handler(Looper.getMainLooper());
 
     private PlacemarkMapObject placemarkMapObject;
+    private AppCompatButton btnLocation;
 
 //    private TrafficLevel trafficLevel = null;
 //    private enum TrafficFreshness {Loading, OK, Expired};
@@ -133,9 +135,25 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
         traffic = MapKitFactory.getInstance().createTrafficLayer(mapView.getMapWindow());
         traffic.setTrafficVisible(false);
+        double lat = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat));
+        double lon = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon));
+        mapView.getMap().move(new CameraPosition(
+                new Point(lat, lon), 14, 0, 0));
 
         userLocation();
-        //placemarkMapObject = null;
+
+        btnLocation = mainView.findViewById(R.id.btnLocation);
+
+        btnLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                double lat = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat));
+                double lon = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon));
+                mapView.getMap().move(new CameraPosition(
+                        new Point(lat, lon), 14, 0, 0));
+            }
+        });
+
         if (((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))) {
             traffic.setTrafficVisible(false);
 
@@ -154,10 +172,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
         }
 
-        double lat = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat));
-        double lon = ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon));
-        mapView.getMap().move(new CameraPosition(
-                new Point(lat, lon), 14, 0, 0));
+
 
 
         return mainView;
