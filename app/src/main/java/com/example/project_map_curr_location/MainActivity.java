@@ -34,7 +34,6 @@ import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
 import com.example.project_map_curr_location.adapter.RVMotosAdapter;
 import com.example.project_map_curr_location.database.DataBaseHelper;
 import com.example.project_map_curr_location.domain.Moto1;
-import com.example.project_map_curr_location.domain.User;
 import com.example.project_map_curr_location.fragment.AccountFragment;
 import com.example.project_map_curr_location.fragment.FakeMopedFragment;
 import com.example.project_map_curr_location.fragment.MopedFragment;
@@ -185,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
             while (geoStatus) {
                 try {
                     updateGPS();
+                    new UserApiVolley(MainActivity.this).fillUser();
                     if (loadDataInt(getString(R.string.car_or_moto)) == 0){
                         new MotoApiVolley(MainActivity.this).fillMoto();
                     }
@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
     private void updateUIVAluses(Location location) {
         saveDataFloat(getString(R.string.actualCameraPositionLat), (float) location.getLatitude());
         saveDataFloat(getString(R.string.actualCameraPositionLon), (float) location.getLongitude());
-
+        saveDataInt(getString(R.string.actualSpeed), (int) location.getSpeed());
         //Toast.makeText(getApplicationContext(), loadDataFloat(getString(R.string.actualCameraPositionLat)) + ": " + loadDataFloat(getString(R.string.actualCameraPositionLon)), Toast.LENGTH_SHORT).show();
     }
 
@@ -459,14 +459,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void setMotorcycleArrayList() {
         motorcycleArrayList = new ArrayList<>();
-        List<User> userList = new ArrayList<>();
-
-        userList = new UserApiVolley(this).getUsers();
-
-        //new MotoApiVolley(this).fillMoto();
-
-//        Log.d("API_TEST", userList.toString());
-//        Log.d("API_TEST", motorcycleArrayList.toString());
     }
 
     public void sendNotificationStatus() {

@@ -88,23 +88,10 @@ public class MotoApiVolley implements MotoApi {
 
                                 boolean success = dataBaseHelper.addOne(moto);
                                 Log.d("API_TEST_VOLLEY", String.valueOf(success));
-                                //Toast.makeText(context, String.valueOf(success), Toast.LENGTH_SHORT);
-//                                long id = moto.getId();
-//                                long user_id = moto.getUser().getId();
-//                                int speed = moto.getSpeed();
-//                                double latitude = moto.getLatitude();
-//                                double longitude = moto.getLongitude();
-//                                double altitude = moto.getAltitude();
-
-//                                db.execSQL("INSERT INTO moto (id, user_id, speed, latitude, longitude, altitude) " +
-//                                        "VALUES (" + id + ", " + user_id + ", " + speed + ", " + latitude + ", " + longitude + ", " + altitude + ")");
-
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-//                        Cursor cursor = db.rawQuery("SELECT * FROM moto", null);
-//                        Log.d(API_TEST, Arrays.toString(cursor.getColumnNames()));
                     }
                 },
 

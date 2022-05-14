@@ -223,13 +223,14 @@
                     android:gravity="bottom">
 
                     <TextView
-                        android:gravity="center_horizontal"
-                        android:layout_gravity="center"
+                        android:id="@+id/textView"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:textSize="25sp"
+                        android:layout_gravity="center"
+                        android:gravity="center_horizontal"
                         android:text="@string/choose_notification_status"
-                        android:textColor="@color/white"/>
+                        android:textColor="@color/white"
+                        android:textSize="25sp" />
 
                     <nl.bryanderidder.themedtogglebuttongroup.ThemedToggleButtonGroup
                         android:id="@+id/toggleGroupNotifications"
@@ -278,6 +279,17 @@
                         <!-- ... -->
 
                     </nl.bryanderidder.themedtogglebuttongroup.ThemedToggleButtonGroup>
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:inputType="text"
+                        android:id="@+id/et_Name"
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        app:layout_constraintBottom_toBottomOf="@+id/textView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

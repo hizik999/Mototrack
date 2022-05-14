@@ -35,7 +35,8 @@
     <string name="fakeMotos">Вы не автомобилист.</string>
     <string name="fakeMotosDesc">Чтобы увидеть список ближайших мотоциклов, Вам нужно выбрать режим водителя автомобиля и построить маршрут.</string>
     <string name="goToSettings">Перейти в настройки</string>
-
+    <string name="inputAddressEditText">Введите адрес</string>
+    <string name="name">Никнейм</string>
 
     <!--Keys for SharedPrefs-->
     <string name="car_or_moto">car_or_moto</string>
@@ -46,8 +47,10 @@
     <string name="cancelTrip">Отменить маршрут?</string>
     <string name="actualCameraPositionLat">actualCameraPositionLat</string>
     <string name="actualCameraPositionLon">actualCameraPositionLon</string>
+    <string name="actualSpeed">actualSpeed</string>
     <string name="tripEnd">tripEnd</string>
     <string name="findLocationEditText">findLocationEditText</string>
-    <string name="inputAddressEditText">Введите адрес</string>
+    <string name="userId">userId</string>
+
 
 </resources>

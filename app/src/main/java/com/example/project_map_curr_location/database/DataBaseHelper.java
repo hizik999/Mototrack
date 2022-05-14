@@ -72,6 +72,23 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return insert != -1;
     }
 
+    public boolean addOne(User user){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put("id", user.getId());
+        cv.put("name", user.getName());
+        cv.put("nickname", user.getNickname());
+        cv.put("email", user.getEmail());
+        cv.put("status", user.getStatus());
+
+        long insert = db.insert("user", null, cv);
+
+        db.close();
+        return insert != -1;
+    }
+
     public List<Moto1> getAllMoto() {
 
         //dropTableMoto();
@@ -117,7 +134,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public void dropTableUser() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DROP TABLE user");
-        String createTableUserStatement = "CREATE TABLE IF NOT EXISTS user (id NUMERIC, " +
+        String createTableUserStatement = "CREATE TABLE user (id NUMERIC, " +
                 "name VARCHAR, nickname VARCHAR, email VARCHAR, status VARCHAR)";
         db.execSQL(createTableUserStatement);
     }
@@ -155,7 +172,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    public User getUSerById(long id){
+    public User getUserById(long id){
 
         String query = "SELECT name, nickname, email, status FROM user WHERE id = " + id;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -183,4 +200,5 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         return user;
     }
+
 }

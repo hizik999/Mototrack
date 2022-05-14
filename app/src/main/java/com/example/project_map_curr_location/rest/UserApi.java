@@ -2,15 +2,9 @@ package com.example.project_map_curr_location.rest;
 
 import com.example.project_map_curr_location.domain.User;
 
-import java.util.List;
-
 public interface UserApi {
 
     void fillUser();
-
-    List<User> getUsers();
-
-    void getUserById(long id);
 
     void addUser(User user);
 

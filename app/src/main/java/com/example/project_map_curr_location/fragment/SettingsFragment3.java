@@ -1,7 +1,10 @@
 package com.example.project_map_curr_location.fragment;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +13,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.project_map_curr_location.MainActivity;
 import com.example.project_map_curr_location.R;
+import com.example.project_map_curr_location.database.DataBaseHelper;
+import com.example.project_map_curr_location.domain.Moto1;
+import com.example.project_map_curr_location.domain.User;
+import com.example.project_map_curr_location.rest.MotoApiVolley;
 
 import nl.bryanderidder.themedtogglebuttongroup.ThemedButton;
 import nl.bryanderidder.themedtogglebuttongroup.ThemedToggleButtonGroup;
@@ -26,6 +34,10 @@ public class SettingsFragment3 extends Fragment {
     private ThemedButton btnCar, btnMoto, btnVoiceOn, btnVoiceOff, btnNotificationOn, btnNotificationOff;
     private Context context;
     private AppCompatButton btn_startTrip;
+    private AppCompatEditText et_name;
+
+    private DataBaseHelper dataBaseHelper;
+    private SQLiteDatabase db;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,6 +64,28 @@ public class SettingsFragment3 extends Fragment {
         btnVoiceOff = getView().findViewById(R.id.btnVoiceOff);
         btnNotificationOn = getView().findViewById(R.id.btnNotificationOn);
         btnNotificationOff = getView().findViewById(R.id.btnNotificationOff);
+
+        et_name = getView().findViewById(R.id.et_Name);
+        et_name.setHint("Введите свой никнейм");
+        et_name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+//        et_FindLocation.setText(loadDataString(getString(R.string.findLocationEditText)));
+
 
         btn_startTrip = getView().findViewById(R.id.btn_startTrip);
 
@@ -145,6 +179,15 @@ public class SettingsFragment3 extends Fragment {
 
                         if (btnMoto.isSelected()){
                             ((MainActivity) context).saveDataInt(getString(R.string.car_or_moto), 1);
+
+                            User user = dataBaseHelper.getUserById(((MainActivity) context).loadDataInt(getString(R.string.userId)));
+
+                            Moto1 moto = new Moto1(user, ((MainActivity) context).loadDataInt(getString(R.string.actualSpeed)),
+                                    ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat)),
+                                    ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon)),
+                                    0);
+
+                            new MotoApiVolley(getContext()).addMoto(moto);
                         }
 
                         if (btnVoiceOn.isSelected()){
