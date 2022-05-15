@@ -16,6 +16,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.project_map_curr_location.MainActivity;
 import com.example.project_map_curr_location.database.DataBaseHelper;
 import com.example.project_map_curr_location.domain.Moto1;
 import com.example.project_map_curr_location.domain.mapper.MotoMapper;
@@ -115,17 +116,14 @@ public class MotoApiVolley implements MotoApi {
                     @Override
                     public void onResponse(String response) {
                         fillMoto();
+                        getId();
                         Log.d(API_TEST, response);
                     }
                 },
 
                 errorListener
         )
-            // ВОТ ЭТА ХУЙНЯ НЕ РАБОТАЕТ ПОТОМУ ЧТО КОНТРОЛЛЕР ТРЕБУЕТ ПАРАМЕТРЫ НЕ СТРИНГ А ДРУГИЕ
-            // А КАК ЭТО ПОМЕНЯТЬ Я НЕ ЕБУ ОТ СЛОВА СОВСЕМ ПОМОГИТЕ
 
-            // я понял в чем ошибка: нужен user_id от созданного user, без него работать не будет
-            // исправление нужно дописать в UserApiVolley, где уже будет браться user и вставляться в moto
         {
             @Nullable
             @Override
@@ -134,7 +132,7 @@ public class MotoApiVolley implements MotoApi {
                 Map<String, String> params = new HashMap<>();
 
                 //params.put("user_id", String.valueOf(moto.getUser().getId()));
-                params.put("user_id", String.valueOf(moto.getUser().getId()));
+                params.put("user_id", String.valueOf(((MainActivity) context).loadDataInt("userId")));
                 params.put("speed", String.valueOf(moto.getSpeed()));
                 params.put("latitude", String.valueOf(moto.getLatitude()));
                 params.put("longitude", String.valueOf(moto.getLongitude()));
@@ -148,6 +146,30 @@ public class MotoApiVolley implements MotoApi {
     }
 
     @Override
+    public void getId() {
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = BASE_URL + "/moto/id";
+
+        StringRequest request = new StringRequest(
+                Request.Method.GET,
+                url,
+
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        ((MainActivity) context).saveDataInt("motoId", Integer.valueOf(response));
+                        Log.d(API_TEST, response);
+                    }
+                },
+
+                errorListener
+        );
+
+        requestQueue.add(request);
+    }
+
+    @Override
     public void updateMoto(long id, long idUser, int speed, float latitude, float longitude, float altitude) {
 
     }
@@ -155,5 +177,30 @@ public class MotoApiVolley implements MotoApi {
     @Override
     public void deleteMoto(long id) {
 
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = BASE_URL + "/moto/" + id;
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.DELETE,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        fillMoto();
+                        ((MainActivity) context).saveDataInt("motoId", -1);
+                    }
+                },
+                errorListener
+        ){
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("id", String.valueOf(id));
+                return params;
+            }
+        };
+
+        requestQueue.add(stringRequest);
     }
 }

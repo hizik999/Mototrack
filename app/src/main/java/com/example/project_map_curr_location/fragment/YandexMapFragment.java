@@ -154,8 +154,10 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
             }
         });
 
+        traffic.setTrafficVisible(false);
+
         if (((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))) {
-            traffic.setTrafficVisible(false);
+            traffic.setTrafficVisible(true);
 
             mapObjects.clear();
             String text = ((MainActivity) context).loadDataString(getString(R.string.findLocationEditText));

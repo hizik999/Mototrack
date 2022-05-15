@@ -70,16 +70,18 @@ public class SettingsFragment3 extends Fragment {
         et_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                ((MainActivity) context).saveDataString(getString(R.string.userNickname), String.valueOf(et_name.getText()));
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                ((MainActivity) context).saveDataString(getString(R.string.userNickname), String.valueOf(et_name.getText()));
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
+
+                ((MainActivity) context).saveDataString(getString(R.string.userNickname), String.valueOf(et_name.getText()));
 
             }
         });
@@ -98,7 +100,7 @@ public class SettingsFragment3 extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
+                if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))) {
                     btn_startTrip.setText(getText(R.string.startTripSuccess));
                 }
 
@@ -109,7 +111,7 @@ public class SettingsFragment3 extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
+                if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))) {
                     btn_startTrip.setText(getText(R.string.startTripSuccess));
                 }
             }
@@ -119,7 +121,7 @@ public class SettingsFragment3 extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
+                if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))) {
                     btn_startTrip.setText(getText(R.string.startTripSuccess));
                 }
             }
@@ -129,7 +131,7 @@ public class SettingsFragment3 extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
+                if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))) {
                     btn_startTrip.setText(getText(R.string.startTripSuccess));
                 }
             }
@@ -139,7 +141,7 @@ public class SettingsFragment3 extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
+                if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))) {
                     btn_startTrip.setText(getText(R.string.startTripSuccess));
                 }
             }
@@ -149,7 +151,7 @@ public class SettingsFragment3 extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
+                if (!((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))) {
                     btn_startTrip.setText(getText(R.string.startTripSuccess));
                 }
             }
@@ -158,7 +160,9 @@ public class SettingsFragment3 extends Fragment {
         btn_startTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))){
+                if (((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))) {
+                    Toast.makeText(getContext(), String.valueOf(((MainActivity) context).loadDataInt(getString(R.string.motoId))), Toast.LENGTH_SHORT).show();
+                    new MotoApiVolley(getContext()).deleteMoto(((MainActivity) context).loadDataInt(getString(R.string.motoId)));
                     Toast.makeText(context, "Вы отменили текущий маршрут", Toast.LENGTH_SHORT).show();
                     ((MainActivity) context).saveDataBoolean(getString(R.string.tripStatus), false);
                     btn_startTrip.setText(getText(R.string.startTripSuccess));
@@ -167,30 +171,46 @@ public class SettingsFragment3 extends Fragment {
                     ((MainActivity) context).saveDataInt(getString(R.string.car_or_moto), 1);
                     ((MainActivity) context).cancelTripEditText();
 
+
+
                 } else {
                     if ((btnCar.isSelected() || btnMoto.isSelected())
                             && (btnVoiceOn.isSelected() || btnVoiceOff.isSelected())
                             && (btnNotificationOn.isSelected() || btnNotificationOff.isSelected())
                             && !((MainActivity) context).loadDataString(getString(R.string.findLocationEditText)).equals("")) {
 
-                        if (btnCar.isSelected()){
+                        if (btnCar.isSelected()) {
                             ((MainActivity) context).saveDataInt(getString(R.string.car_or_moto), 0);
                         }
 
-                        if (btnMoto.isSelected()){
+                        if (btnMoto.isSelected()) {
                             ((MainActivity) context).saveDataInt(getString(R.string.car_or_moto), 1);
 
-                            User user = dataBaseHelper.getUserById(((MainActivity) context).loadDataInt(getString(R.string.userId)));
+//                            Toast.makeText(getContext(), ((MainActivity) context).loadDataInt("userId"), Toast.LENGTH_SHORT).show();
+//                            try {
+//
+//                            } catch (Exception e){
+//                                e.printStackTrace();
+//                            }
 
-                            Moto1 moto = new Moto1(user, ((MainActivity) context).loadDataInt(getString(R.string.actualSpeed)),
-                                    ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat)),
-                                    ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon)),
-                                    0);
+                            if (((MainActivity) context).loadDataInt(getString(R.string.motoId)) == -1) {
+                                User user = new User(((MainActivity) context).loadDataInt("userId"), "", ((MainActivity) context).loadDataString(getString(R.string.userNickname)), "", "moto");
 
-                            new MotoApiVolley(getContext()).addMoto(moto);
+                                Moto1 moto = new Moto1(((MainActivity) context).loadDataInt(getString(R.string.motoId)), user, ((MainActivity) context).loadDataInt(getString(R.string.actualSpeed)),
+                                        ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat)),
+                                        ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLon)),
+                                        0);
+
+                                new MotoApiVolley(getContext()).addMoto(moto);
+
+                            } else {
+                                //new MotoApiVolley(getContext()).updateMoto();
+                            }
+
+
                         }
 
-                        if (btnVoiceOn.isSelected()){
+                        if (btnVoiceOn.isSelected()) {
                             ((MainActivity) context).saveDataBoolean(getString(R.string.voiceOn), true);
                             ((MainActivity) context).playSoundStart();
                         } else {

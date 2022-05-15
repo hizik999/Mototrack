@@ -15,4 +15,6 @@ public interface UserApi {
             String email,
             String status
     );
+
+    long getNewId();
 }

@@ -34,6 +34,7 @@ import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
 import com.example.project_map_curr_location.adapter.RVMotosAdapter;
 import com.example.project_map_curr_location.database.DataBaseHelper;
 import com.example.project_map_curr_location.domain.Moto1;
+import com.example.project_map_curr_location.domain.User;
 import com.example.project_map_curr_location.fragment.AccountFragment;
 import com.example.project_map_curr_location.fragment.FakeMopedFragment;
 import com.example.project_map_curr_location.fragment.MopedFragment;
@@ -107,6 +108,33 @@ public class MainActivity extends AppCompatActivity {
         geoThread.setDaemon(true);
         geoThread.start();
 
+        int s = loadDataInt(getString(R.string.car_or_moto));
+        String status = " ";
+
+        if (loadDataBoolean(getString(R.string.tripStatus))) {
+            if (s == 0) {
+                status = "car";
+            } else {
+                status = "moto";
+            }
+        } else {
+            status = "car";
+        }
+
+        if (loadDataBoolean(getString(R.string.userLogged))) {
+
+            new UserApiVolley(this).updateUser(loadDataInt("userId"), "", loadDataString(getString(R.string.userNickname)), "", status);
+            Toast.makeText(this, String.valueOf(loadDataInt("userId")), Toast.LENGTH_SHORT).show();
+            //saveDataBoolean(getString(R.string.userLogged), false);   //на случай перезапуска сервера
+        } else {
+
+            User user = new User("", loadDataString(getString(R.string.userNickname)), "", status);
+            new UserApiVolley(this).addUser(user);
+
+            Toast.makeText(this, String.valueOf(loadDataInt("userId")), Toast.LENGTH_SHORT).show();
+            saveDataBoolean(getString(R.string.userLogged), true);
+        }
+
 
 
         setMotorcycleArrayList();
@@ -168,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         saveDataInt(getString(R.string.car_or_moto), 1);
         geoStatus = false;
-        if (geoThread != null){
+        if (geoThread != null) {
             Thread dummy = geoThread;
             geoThread = null;
             dummy.interrupt();
@@ -184,8 +212,8 @@ public class MainActivity extends AppCompatActivity {
             while (geoStatus) {
                 try {
                     updateGPS();
-                    new UserApiVolley(MainActivity.this).fillUser();
-                    if (loadDataInt(getString(R.string.car_or_moto)) == 0){
+//                    new UserApiVolley(MainActivity.this).fillUser();
+                    if (loadDataInt(getString(R.string.car_or_moto)) == 0) {
                         new MotoApiVolley(MainActivity.this).fillMoto();
                     }
                     try {
@@ -401,7 +429,6 @@ public class MainActivity extends AppCompatActivity {
         fragment_fake_moped = new FakeMopedFragment();
 
         curr_fragment = fragment_map;
-
 
 
         loadFragment(curr_fragment);

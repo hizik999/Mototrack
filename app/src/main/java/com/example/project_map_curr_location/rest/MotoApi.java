@@ -8,6 +8,8 @@ public interface MotoApi {
 
     void addMoto(Moto1 moto);
 
+    void getId();
+
     void updateMoto(
             long id,
             long idUser,
