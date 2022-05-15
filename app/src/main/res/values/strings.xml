@@ -53,6 +53,7 @@
     <string name="findLocationEditText">findLocationEditText</string>
     <string name="userId">userId</string>
     <string name="motoId">motoId</string>
+    <string name="lastMotoName">lastMotoName</string>
     <string name="userNickname">userNickname</string>
     <string name="userLogged">userLogged</string>
 

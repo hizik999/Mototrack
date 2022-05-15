@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +19,12 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.project_map_curr_location.database.DataBaseHelper;
 import com.example.project_map_curr_location.MainActivity;
 import com.example.project_map_curr_location.R;
 import com.example.project_map_curr_location.adapter.RVMotosAdapter;
+import com.example.project_map_curr_location.database.DataBaseHelper;
 import com.example.project_map_curr_location.domain.Moto1;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MopedFragment extends Fragment {
@@ -67,12 +67,9 @@ public class MopedFragment extends Fragment {
 
 
             dataBaseHelper = new DataBaseHelper(getContext());
-            List<Moto1> moto = new ArrayList<>();
-
-
-
+            List<Moto1> moto;
             moto = dataBaseHelper.getAllMoto();
-
+            Log.d("MOPEDS", moto.toString());
             tv_motos.setText(getString(R.string.motos_count) + ":" + " " + moto.size());
 
             RVMotosAdapter adapter = new RVMotosAdapter(view.getContext(), moto);

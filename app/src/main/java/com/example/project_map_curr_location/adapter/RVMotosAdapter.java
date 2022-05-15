@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.project_map_curr_location.MainActivity;
 import com.example.project_map_curr_location.R;
 import com.example.project_map_curr_location.domain.Moto1;
+import com.example.project_map_curr_location.rest.MotoApiVolley;
 
 import java.util.List;
 
@@ -77,6 +78,10 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
     public void onBindViewHolder(@NonNull RVMotosHolder holder, @SuppressLint("RecyclerView") int position) {
 
         Moto1 moto = motorcycleList.get(position);
+
+        new MotoApiVolley(context).getNameByMoto(moto.getId());
+        holder.userName.setText(((MainActivity) context).loadDataString("lastMotoName"));
+        holder.userSpeed.setText(moto.getSpeed());
         //((RVMotosHolder) holder).userDistance.setText((int) moto.getId());
 
 

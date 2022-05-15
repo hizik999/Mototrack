@@ -207,6 +207,31 @@ public class MotoApiVolley implements MotoApi {
     }
 
     @Override
+    public void getNameByMoto(long id) {
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = BASE_URL + "/moto/name/" + id;
+
+        StringRequest request = new StringRequest(
+                Request.Method.GET,
+                url,
+
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        ((MainActivity) context).saveDataString("lastMotoName", String.valueOf(response));
+                        Log.d("MOTO_NAME", response);
+                    }
+                },
+
+                errorListener
+        );
+
+        requestQueue.add(request);
+
+    }
+
+    @Override
     public void deleteMoto(long id) {
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);

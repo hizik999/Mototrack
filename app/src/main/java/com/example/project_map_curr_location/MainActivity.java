@@ -124,14 +124,14 @@ public class MainActivity extends AppCompatActivity {
         if (loadDataBoolean(getString(R.string.userLogged))) {
 
             new UserApiVolley(this).updateUser(loadDataInt("userId"), "", loadDataString(getString(R.string.userNickname)), "", status);
-            Toast.makeText(this, String.valueOf(loadDataInt("userId")), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "User logged true: " + String.valueOf(loadDataInt("userId")), Toast.LENGTH_SHORT).show();
             //saveDataBoolean(getString(R.string.userLogged), false);   //на случай перезапуска сервера
         } else {
 
             User user = new User("", loadDataString(getString(R.string.userNickname)), "", status);
             new UserApiVolley(this).addUser(user);
 
-            Toast.makeText(this, String.valueOf(loadDataInt("userId")), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "User logged false: " + String.valueOf(loadDataInt("userId")), Toast.LENGTH_SHORT).show();
             saveDataBoolean(getString(R.string.userLogged), true);
         }
 
@@ -222,18 +222,26 @@ public class MainActivity extends AppCompatActivity {
 //                    new UserApiVolley(MainActivity.this).fillUser();
 
                     if (loadDataInt(getString(R.string.car_or_moto)) == 0) {
+
                         new MotoApiVolley(MainActivity.this).fillMoto();
                     } else {
-                        new UserApiVolley(MainActivity.this).updateUser(
+                        new MotoApiVolley(MainActivity.this).updateMoto(
+                                loadDataInt(getString(R.string.motoId)),
                                 loadDataInt("userId"),
-                                "",
-                                loadDataString(getString(R.string.userNickname)),
-                                "",
-                                status
-                        );
+                                loadDataInt(getString(R.string.actualSpeed)),
+                                loadDataFloat(getString(R.string.actualCameraPositionLat)),
+                                loadDataFloat(getString(R.string.actualCameraPositionLon)),
+                                loadDataFloat(getString(R.string.actualCameraPositionAlt)));
+//                        new UserApiVolley(MainActivity.this).updateUser(
+//                                loadDataInt("userId"),
+//                                "",
+//                                loadDataString(getString(R.string.userNickname)),
+//                                "",
+//                                status
+//                        );
                     }
                     try {
-                        sleep(3 * 1000);
+                        sleep(2 * 1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -471,7 +479,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 3:
                         //new MotoApiVolley(MainActivity.this).fillMoto();
-                        if (loadDataInt(getString(R.string.car_or_moto)) == 1) {
+                        if (loadDataInt(getString(R.string.car_or_moto)) == 1 || !loadDataBoolean(getString(R.string.tripStatus))) {
                             curr_fragment = fragment_fake_moped;
                         } else {
                             curr_fragment = fragment_moped;
@@ -581,7 +589,7 @@ public class MainActivity extends AppCompatActivity {
 
     public float loadDataFloat(String key) {
         sharedPreferences = getPreferences(MODE_PRIVATE);
-        float value = sharedPreferences.getFloat(key, 0);
+        float value = sharedPreferences.getFloat(key, 0.0F);
         return value;
     }
 
