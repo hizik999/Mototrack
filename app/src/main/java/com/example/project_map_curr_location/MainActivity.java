@@ -136,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
         setMotorcycleArrayList();
         setBottomNavigation();
         RVMotosAdapter rvMotosAdapter = new RVMotosAdapter(this, motorcycleArrayList);
@@ -212,9 +211,26 @@ public class MainActivity extends AppCompatActivity {
             while (geoStatus) {
                 try {
                     updateGPS();
+
+                    String status;
+                    if (loadDataInt("car_or_moto") == 0) {
+                        status = "car";
+                    } else {
+                        status = "moto";
+                    }
+
 //                    new UserApiVolley(MainActivity.this).fillUser();
+
                     if (loadDataInt(getString(R.string.car_or_moto)) == 0) {
                         new MotoApiVolley(MainActivity.this).fillMoto();
+                    } else {
+                        new UserApiVolley(MainActivity.this).updateUser(
+                                loadDataInt("userId"),
+                                "",
+                                loadDataString(getString(R.string.userNickname)),
+                                "",
+                                status
+                        );
                     }
                     try {
                         sleep(3 * 1000);
@@ -232,6 +248,7 @@ public class MainActivity extends AppCompatActivity {
         saveDataFloat(getString(R.string.actualCameraPositionLat), (float) location.getLatitude());
         saveDataFloat(getString(R.string.actualCameraPositionLon), (float) location.getLongitude());
         saveDataInt(getString(R.string.actualSpeed), (int) location.getSpeed());
+        saveDataFloat(getString(R.string.actualCameraPositionAlt), (float) location.getAltitude());
         //Toast.makeText(getApplicationContext(), loadDataFloat(getString(R.string.actualCameraPositionLat)) + ": " + loadDataFloat(getString(R.string.actualCameraPositionLon)), Toast.LENGTH_SHORT).show();
     }
 

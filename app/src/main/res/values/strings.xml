@@ -37,6 +37,7 @@
     <string name="goToSettings">Перейти в настройки</string>
     <string name="inputAddressEditText">Введите адрес</string>
     <string name="name">Никнейм</string>
+    <string name="cancelTrip">Отменить маршрут?</string>
 
     <!--Keys for SharedPrefs-->
     <string name="car_or_moto">car_or_moto</string>
@@ -44,9 +45,9 @@
     <string name="show_moto">show_moto</string>
     <string name="voiceOn">voiceOn</string>
     <string name="tripStatus">tripStatus</string>
-    <string name="cancelTrip">Отменить маршрут?</string>
     <string name="actualCameraPositionLat">actualCameraPositionLat</string>
     <string name="actualCameraPositionLon">actualCameraPositionLon</string>
+    <string name="actualCameraPositionAlt">actualCameraPositionAlt</string>
     <string name="actualSpeed">actualSpeed</string>
     <string name="tripEnd">tripEnd</string>
     <string name="findLocationEditText">findLocationEditText</string>

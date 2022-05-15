@@ -172,6 +172,38 @@ public class MotoApiVolley implements MotoApi {
     @Override
     public void updateMoto(long id, long idUser, int speed, float latitude, float longitude, float altitude) {
 
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = BASE_URL + "/moto/" + id;
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.PUT,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        fillMoto();
+                    }
+                },
+                errorListener
+        ){
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String, String> params = new HashMap<>();
+                params.put("id", String.valueOf(id));
+                params.put("user_id", String.valueOf(idUser));
+                params.put("speed", String.valueOf(speed));
+                params.put("latitude", String.valueOf(latitude));
+                params.put("longitude", String.valueOf(longitude));
+                params.put("altitude", String.valueOf(altitude));
+
+                return params;
+            }
+        };
+
+        requestQueue.add(stringRequest);
+
     }
 
     @Override

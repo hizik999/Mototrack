@@ -147,12 +147,33 @@ public class UserApiVolley implements UserApi{
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         String url = BASE_URL + "/user/" + id;
 
-//        StringRequest stringRequest = new StringRequest(
-//                Request.Method.POST,
-//                url,
-//
-//        )
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.PUT,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        fillUser();
+                    }
+                },
+                errorListener
+        ){
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
 
+                Map<String, String> params = new HashMap<>();
+                params.put("id", String.valueOf(id));
+                params.put("name", String.valueOf(name));
+                params.put("nickname", String.valueOf(nickname));
+                params.put("email", String.valueOf(email));
+                params.put("status", String.valueOf(status));
+
+                return params;
+            }
+        };
+
+        requestQueue.add(stringRequest);
     }
 
     @Override

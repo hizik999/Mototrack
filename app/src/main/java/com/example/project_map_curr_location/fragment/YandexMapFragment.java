@@ -175,8 +175,6 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         }
 
 
-
-
         return mainView;
     }
 
@@ -263,14 +261,18 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
                 }
             };
             while (thread) {
-                try {
+                if (((MainActivity) context).loadDataInt(getString(R.string.car_or_moto)) == 0) {
+                    try {
+                        handler.post(runnable);
+                        sleep(4 * 1000);
+                        handler.post(runnable1);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
 
-                    handler.post(runnable);
-                    sleep(4 * 1000);
-                    handler.post(runnable1);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+
             }
 
 
