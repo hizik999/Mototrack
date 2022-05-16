@@ -225,13 +225,16 @@ public class MainActivity extends AppCompatActivity {
 
                         new MotoApiVolley(MainActivity.this).fillMoto();
                     } else {
-                        new MotoApiVolley(MainActivity.this).updateMoto(
-                                loadDataInt(getString(R.string.motoId)),
-                                loadDataInt("userId"),
-                                loadDataInt(getString(R.string.actualSpeed)),
-                                loadDataFloat(getString(R.string.actualCameraPositionLat)),
-                                loadDataFloat(getString(R.string.actualCameraPositionLon)),
-                                loadDataFloat(getString(R.string.actualCameraPositionAlt)));
+                        if (loadDataInt(getString(R.string.motoId)) != -1){
+                            new MotoApiVolley(MainActivity.this).updateMoto(
+                                    loadDataInt(getString(R.string.motoId)),
+                                    loadDataInt("userId"),
+                                    loadDataInt(getString(R.string.actualSpeed)),
+                                    loadDataFloat(getString(R.string.actualCameraPositionLat)),
+                                    loadDataFloat(getString(R.string.actualCameraPositionLon)),
+                                    loadDataFloat(getString(R.string.actualCameraPositionAlt)));
+                        }
+
 //                        new UserApiVolley(MainActivity.this).updateUser(
 //                                loadDataInt("userId"),
 //                                "",

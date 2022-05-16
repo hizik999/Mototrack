@@ -215,7 +215,7 @@ public class SettingsFragment3 extends Fragment {
                             "",
                             ((MainActivity) context).loadDataString(getString(R.string.userNickname)), "", "car"
                     );
-
+                    ((MainActivity) context).saveDataInt(getString(R.string.motoId), -1);
 
 
                 } else {
@@ -226,6 +226,12 @@ public class SettingsFragment3 extends Fragment {
 
                         if (btnCar.isSelected()) {
                             ((MainActivity) context).saveDataInt(getString(R.string.car_or_moto), 0);
+
+                            new UserApiVolley(getContext()).updateUser(
+                                    ((MainActivity) context).loadDataInt("userId"),
+                                    "",
+                                    ((MainActivity) context).loadDataString(getString(R.string.userNickname)), "", "car"
+                            );
                         }
 
                         if (btnMoto.isSelected()) {
@@ -233,11 +239,11 @@ public class SettingsFragment3 extends Fragment {
                             new UserApiVolley(getContext()).updateUser(
                                     ((MainActivity) context).loadDataInt("userId"),
                                     "",
-                                    ((MainActivity) context).loadDataString(getString(R.string.userNickname)), "", "car"
+                                    ((MainActivity) context).loadDataString(getString(R.string.userNickname)), "", "moto"
                             );
 
                             if (((MainActivity) context).loadDataInt(getString(R.string.motoId)) == -1) {
-                                User user = new User(((MainActivity) context).loadDataInt("userId"), "", ((MainActivity) context).loadDataString(getString(R.string.userNickname)), "", "moto");
+                                User user = new User(((MainActivity) context).loadDataInt("userId"), "", ((MainActivity) context).loadDataString(getString(R.string.userNickname)), "", "car");
 
                                 Moto1 moto = new Moto1(((MainActivity) context).loadDataInt(getString(R.string.motoId)), user, ((MainActivity) context).loadDataInt(getString(R.string.actualSpeed)),
                                         ((MainActivity) context).loadDataFloat(getString(R.string.actualCameraPositionLat)),

@@ -81,7 +81,7 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
 
         new MotoApiVolley(context).getNameByMoto(moto.getId());
         holder.userName.setText(((MainActivity) context).loadDataString("lastMotoName"));
-        holder.userSpeed.setText(moto.getSpeed());
+//        holder.userSpeed.setText(moto.getSpeed());
         //((RVMotosHolder) holder).userDistance.setText((int) moto.getId());
 
 
