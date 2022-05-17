@@ -55,7 +55,7 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
             userName = itemView.findViewById(R.id.userName);
             userDistance = itemView.findViewById(R.id.userDistance);
             userSpeed = itemView.findViewById(R.id.userSpeed);
-            userShowOnMap = itemView.findViewById(R.id.userShowOnMap);
+            //userShowOnMap = itemView.findViewById(R.id.userShowOnMap);
         }
 
 
@@ -81,7 +81,24 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
 
         new MotoApiVolley(context).getNameByMoto(moto.getId());
         holder.userName.setText(((MainActivity) context).loadDataString("lastMotoName"));
-//        holder.userSpeed.setText(moto.getSpeed());
+
+        new MotoApiVolley(context).getNameByMoto(moto.getId());
+        holder.userName.setText(((MainActivity) context).loadDataString("lastMotoName"));
+
+        holder.userSpeed.setText(String.valueOf(moto.getSpeed()) + " км/ч");
+
+        //new MotoApiVolley(context).getDistanceByMotoId(1);
+
+        float distance = (float) Math.acos(Math.sin(moto.getLatitude()) * Math.sin(((MainActivity) context).loadDataFloat("actualCameraPositionLat"))
+                + Math.cos(moto.getLatitude()) * Math.cos(((MainActivity) context).loadDataFloat("actualCameraPositionLat"))
+                * Math.cos(moto.getLongitude() - Math.cos(((MainActivity) context).loadDataFloat("actualCameraPositionLon"))));
+
+
+        holder.userDistance.setText(String.valueOf((int)
+                calculateDistance(moto.getLatitude(), moto.getLongitude(),
+                ((MainActivity) context).loadDataFloat("actualCameraPositionLat"),
+                ((MainActivity) context).loadDataFloat("actualCameraPositionLon")))
+        + " км");
         //((RVMotosHolder) holder).userDistance.setText((int) moto.getId());
 
 
@@ -91,16 +108,41 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
 //        String distance = motorcycleList.get(position)
 //        holder.userDistance.setText();
 
-        holder.userShowOnMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity) context).saveDataBoolean("map_animation", true);
-//                Toast.makeText(context, String.valueOf(position), Toast.LENGTH_SHORT).show();
-                ((MainActivity) context).loadMapInt(position);
+//        holder.userShowOnMap.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                ((MainActivity) context).saveDataBoolean("map_animation", true);
+////                Toast.makeText(context, String.valueOf(position), Toast.LENGTH_SHORT).show();
+//                ((MainActivity) context).loadMapInt(position);
+//
+//
+//            }
+//        });
+    }
 
+    private double calculateDistance(double Alat, double Alon, float Blat, float Blon) {
 
-            }
-        });
+        final long EARTH_RADIUS = 6371;
+        double lat1 = Alat * Math.PI / 180;
+        double lat2 = Blat * Math.PI / 180;
+        double lon1 = Alon * Math.PI / 180;
+        double lon2 = Blon * Math.PI / 180;
+
+        double cl1 = Math.cos(lat1);
+        double cl2 = Math.cos(lat2);
+        double sl1 = Math.sin(lat1);
+        double sl2 = Math.sin(lat2);
+
+        double delta = lon1 - lon2;
+
+        double cdelta = Math.cos(delta);
+        double sdelta = Math.sin(delta);
+
+        double y = Math.sqrt(Math.pow(cl2 * sdelta, 2) + Math.pow(cl1 * sl2 - sl1 * cl2 * cdelta, 2));
+        double x = sl1 * sl2 + cl1 * cl2 * cdelta;
+        double ad = Math.atan2(y, x);
+
+        return ad * EARTH_RADIUS;
     }
 
 }

@@ -207,6 +207,39 @@ public class MotoApiVolley implements MotoApi {
     }
 
     @Override
+    public void getDistanceByMotoId(long id) {
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        String url = BASE_URL + "/moto/distance/" + id;
+
+        StringRequest request = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        ((MainActivity) context).saveDataFloat("lastMotoDistance", Float.valueOf(response));
+                        Log.d("DISTANCE", String.valueOf(Float.valueOf(response)));
+                    }
+                },
+                errorListener
+        ){
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String, String> params = new HashMap<>();
+                params.put("endLat", String.valueOf(((MainActivity) context).loadDataFloat("actualCameraPositionLat")));
+                params.put("endLon", String.valueOf(((MainActivity) context).loadDataFloat("actualCameraPositionLon")));
+                Log.d("DISTANCE", "true");
+                return params;
+            }
+        };
+
+        requestQueue.add(request);
+    }
+
+    @Override
     public void getNameByMoto(long id) {
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);

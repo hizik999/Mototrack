@@ -19,6 +19,8 @@ public interface MotoApi {
             float altitude
     );
 
+    void getDistanceByMotoId(long id);
+
     void getNameByMoto(long id);
 
     void deleteMoto(long id);
