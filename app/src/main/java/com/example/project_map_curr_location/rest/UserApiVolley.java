@@ -38,6 +38,8 @@ public class UserApiVolley implements UserApi{
     private DataBaseHelper dataBaseHelper;
     private SQLiteDatabase db;
 
+    private RequestQueue requestQueue;
+
     public UserApiVolley(Context context) {
         this.context = context;
 
@@ -53,7 +55,7 @@ public class UserApiVolley implements UserApi{
     @Override
     public void fillUser() {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue = Volley.newRequestQueue(context);
         String url = BASE_URL + "/user";
 
         dataBaseHelper = new DataBaseHelper(context);
@@ -96,7 +98,7 @@ public class UserApiVolley implements UserApi{
     @Override
     public void addUser(User user) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue = Volley.newRequestQueue(context);
         String url = BASE_URL + "/user";
 
         StringRequest request = new StringRequest(
@@ -106,8 +108,8 @@ public class UserApiVolley implements UserApi{
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        fillUser();
                         getNewId();
+                        fillUser();
                         Log.d("API_TEST_ADD_USER", response);
                     }
                 },
@@ -144,7 +146,7 @@ public class UserApiVolley implements UserApi{
     @Override
     public void updateUser(long id, String name, String nickname, String email, String status) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue = Volley.newRequestQueue(context);
         String url = BASE_URL + "/user/" + id;
 
         StringRequest stringRequest = new StringRequest(
@@ -179,7 +181,7 @@ public class UserApiVolley implements UserApi{
     @Override
     public long getNewId() {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue = Volley.newRequestQueue(context);
         String url = BASE_URL + "/user/id";
 
         StringRequest request = new StringRequest(

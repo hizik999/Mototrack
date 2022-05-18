@@ -94,11 +94,11 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
                 * Math.cos(moto.getLongitude() - Math.cos(((MainActivity) context).loadDataFloat("actualCameraPositionLon"))));
 
 
-        holder.userDistance.setText(String.valueOf((int)
+        holder.userDistance.setText(String.valueOf( ((int)
                 calculateDistance(moto.getLatitude(), moto.getLongitude(),
                 ((MainActivity) context).loadDataFloat("actualCameraPositionLat"),
                 ((MainActivity) context).loadDataFloat("actualCameraPositionLon")))
-        + " км");
+        + " м"));
         //((RVMotosHolder) holder).userDistance.setText((int) moto.getId());
 
 
@@ -122,7 +122,7 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
 
     private double calculateDistance(double Alat, double Alon, float Blat, float Blon) {
 
-        final long EARTH_RADIUS = 6371;
+        final long EARTH_RADIUS = 6372795;
         double lat1 = Alat * Math.PI / 180;
         double lat2 = Blat * Math.PI / 180;
         double lon1 = Alon * Math.PI / 180;

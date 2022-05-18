@@ -41,7 +41,6 @@ public class MotoApiVolley implements MotoApi {
     private SimpleCursorAdapter userAdapter;
 
 
-
     public MotoApiVolley(Context context) {
         this.context = context;
 
@@ -68,6 +67,7 @@ public class MotoApiVolley implements MotoApi {
     @Override
     public void fillMoto() {
 
+
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         String url = BASE_URL + "/moto";
 
@@ -83,19 +83,27 @@ public class MotoApiVolley implements MotoApi {
                     public void onResponse(JSONArray response) {
                         dataBaseHelper.dropTableMoto();
                         try {
+                            int c = 0;
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject jsonObject = response.getJSONObject(i);
                                 Moto1 moto = MotoMapper.motoFromJson(jsonObject);
 
-                                boolean success = dataBaseHelper.addOne(moto);
-                                Log.d("API_TEST_VOLLEY", String.valueOf(success));
+                                if (((int) calculateDistance(moto.getLatitude(), moto.getLongitude(),
+                                        ((MainActivity) context).loadDataFloat("actualCameraPositionLat"),
+                                        ((MainActivity) context).loadDataFloat("actualCameraPositionLon")))
+                                        < 1000) {
+                                    c ++;
+                                    ((MainActivity) context).saveDataInt("motoCount", c);
+                                    boolean success = dataBaseHelper.addOne(moto);
+                                    Log.d("API_TEST_VOLLEY", String.valueOf(success));
+                                }
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 },
-
                 errorListener
         );
 
@@ -122,9 +130,7 @@ public class MotoApiVolley implements MotoApi {
                 },
 
                 errorListener
-        )
-
-        {
+        ) {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -185,7 +191,7 @@ public class MotoApiVolley implements MotoApi {
                     }
                 },
                 errorListener
-        ){
+        ) {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -223,7 +229,7 @@ public class MotoApiVolley implements MotoApi {
                     }
                 },
                 errorListener
-        ){
+        ) {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -281,7 +287,7 @@ public class MotoApiVolley implements MotoApi {
                     }
                 },
                 errorListener
-        ){
+        ) {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -292,5 +298,30 @@ public class MotoApiVolley implements MotoApi {
         };
 
         requestQueue.add(stringRequest);
+    }
+
+    private double calculateDistance(double Alat, double Alon, float Blat, float Blon) {
+
+        final long EARTH_RADIUS = 6372795;
+        double lat1 = Alat * Math.PI / 180;
+        double lat2 = Blat * Math.PI / 180;
+        double lon1 = Alon * Math.PI / 180;
+        double lon2 = Blon * Math.PI / 180;
+
+        double cl1 = Math.cos(lat1);
+        double cl2 = Math.cos(lat2);
+        double sl1 = Math.sin(lat1);
+        double sl2 = Math.sin(lat2);
+
+        double delta = lon1 - lon2;
+
+        double cdelta = Math.cos(delta);
+        double sdelta = Math.sin(delta);
+
+        double y = Math.sqrt(Math.pow(cl2 * sdelta, 2) + Math.pow(cl1 * sl2 - sl1 * cl2 * cdelta, 2));
+        double x = sl1 * sl2 + cl1 * cl2 * cdelta;
+        double ad = Math.atan2(y, x);
+
+        return ad * EARTH_RADIUS;
     }
 }

@@ -210,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
 
             while (geoStatus) {
                 try {
+
                     updateGPS();
 
                     String status;
@@ -223,9 +224,13 @@ public class MainActivity extends AppCompatActivity {
 
                     if (loadDataInt(getString(R.string.car_or_moto)) == 0) {
 
+                        int c = loadDataInt("motoCount");
                         new MotoApiVolley(MainActivity.this).fillMoto();
+                        if (c < loadDataInt("motoCount")){
+                            playSoundStart();
+                        }
                     } else {
-                        if (loadDataInt(getString(R.string.motoId)) != -1){
+                        if (loadDataInt(getString(R.string.motoId)) != -1) {
                             new MotoApiVolley(MainActivity.this).updateMoto(
                                     loadDataInt(getString(R.string.motoId)),
                                     loadDataInt("userId"),
@@ -244,7 +249,8 @@ public class MainActivity extends AppCompatActivity {
 //                        );
                     }
                     try {
-                        sleep(2 * 1000);
+                        sleep(1 * 1000);
+                        //db.close();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

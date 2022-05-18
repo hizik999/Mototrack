@@ -264,7 +264,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
                 if (((MainActivity) context).loadDataInt(getString(R.string.car_or_moto)) == 0) {
                     try {
                         handler.post(runnable);
-                        sleep(4 * 1000);
+                        sleep(1 * 1000);
                         handler.post(runnable1);
                     } catch (Exception e) {
                         e.printStackTrace();
