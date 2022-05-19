@@ -93,12 +93,18 @@ public class MotoApiVolley implements MotoApi {
                                         ((MainActivity) context).loadDataFloat("actualCameraPositionLon")))
                                         < 1000) {
                                     c ++;
-                                    ((MainActivity) context).saveDataInt("motoCount", c);
+
+                                    if (c > ((MainActivity) context).loadDataInt("motoCount")){
+                                        ((MainActivity) context).playSoundStart();
+                                    }
+
                                     boolean success = dataBaseHelper.addOne(moto);
                                     Log.d("API_TEST_VOLLEY", String.valueOf(success));
                                 }
 
                             }
+                            ((MainActivity) context).saveDataInt("motoCount", c);
+                            //Toast.makeText(context, String.valueOf(((MainActivity) context).loadDataInt("motoCount")) , Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

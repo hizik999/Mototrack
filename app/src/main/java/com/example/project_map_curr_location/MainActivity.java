@@ -228,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
                         new MotoApiVolley(MainActivity.this).fillMoto();
                         if (c < loadDataInt("motoCount")){
                             playSoundStart();
+                            saveDataInt("motoCount", c);
                         }
                     } else {
                         if (loadDataInt(getString(R.string.motoId)) != -1) {

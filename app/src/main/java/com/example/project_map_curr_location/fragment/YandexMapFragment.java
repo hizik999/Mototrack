@@ -260,17 +260,30 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
                     deleteMotos(placemarkMapObjects123);
                 }
             };
+            Runnable runnable2 = new Runnable() {
+                @Override
+                public void run() {
+                    String text = ((MainActivity) context).loadDataString(getString(R.string.findLocationEditText));
+                    submitQuery(text);
+                }
+            };
+            Runnable runnable3 = new Runnable() {
+                @Override
+                public void run() {
+                    mapObjects.clear();
+                }
+            };
             while (thread) {
                 if (((MainActivity) context).loadDataInt(getString(R.string.car_or_moto)) == 0) {
                     try {
                         handler.post(runnable);
+                        //handler.post(runnable2);
                         sleep(1 * 1000);
                         handler.post(runnable1);
+                        //handler.post(runnable3);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else {
-
                 }
 
             }

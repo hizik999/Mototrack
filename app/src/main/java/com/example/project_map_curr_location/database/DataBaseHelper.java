@@ -201,4 +201,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return user;
     }
 
+    public int getSizeMoto(){
+        List<Moto1> list = getAllMoto();
+        return list.size();
+    }
+
 }
