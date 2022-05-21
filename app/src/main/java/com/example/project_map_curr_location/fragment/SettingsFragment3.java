@@ -268,7 +268,7 @@ public class SettingsFragment3 extends Fragment {
 
                         if (btnVoiceOn.isSelected()) {
                             ((MainActivity) context).saveDataBoolean(getString(R.string.voiceOn), true);
-                            ((MainActivity) context).playSoundStart();
+                            //((MainActivity) context).playSoundStart();
                         } else {
                             ((MainActivity) context).saveDataBoolean(getString(R.string.voiceOn), false);
                         }

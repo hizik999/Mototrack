@@ -2,9 +2,9 @@ package com.example.project_map_curr_location.rest;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -17,6 +17,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.project_map_curr_location.MainActivity;
+import com.example.project_map_curr_location.R;
 import com.example.project_map_curr_location.database.DataBaseHelper;
 import com.example.project_map_curr_location.domain.Moto1;
 import com.example.project_map_curr_location.domain.mapper.MotoMapper;
@@ -36,10 +37,10 @@ public class MotoApiVolley implements MotoApi {
     private Response.ErrorListener errorListener;
 
     private DataBaseHelper dataBaseHelper;
-    private SQLiteDatabase db;
+//    private SQLiteDatabase db;
     private Cursor cursor;
     private SimpleCursorAdapter userAdapter;
-
+    private RequestQueue requestQueue;
 
     public MotoApiVolley(Context context) {
         this.context = context;
@@ -48,27 +49,32 @@ public class MotoApiVolley implements MotoApi {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(API_TEST, error.toString());
+                Toast.makeText(context.getApplicationContext(), "Нет подключения к Интернету, \nданные не актуальны", 5).show();
+
             }
         };
     }
 
-    public MotoApiVolley(Context context, SQLiteDatabase db) {
-        this.context = context;
-        this.db = db;
-
-        errorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(API_TEST, error.toString());
-            }
-        };
-    }
+//    public MotoApiVolley(Context context, SQLiteDatabase db) {
+//        this.context = context;
+//        this.db = db;
+//
+//        errorListener = new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Log.d(API_TEST, error.toString());
+//            }
+//        };
+//    }
 
     @Override
     public void fillMoto() {
 
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
         String url = BASE_URL + "/moto";
 
         dataBaseHelper = new DataBaseHelper(context);
@@ -94,12 +100,12 @@ public class MotoApiVolley implements MotoApi {
                                         < 1000) {
                                     c ++;
 
-                                    if (c > ((MainActivity) context).loadDataInt("motoCount")){
+                                    if (c > ((MainActivity) context).loadDataInt("motoCount") && ((MainActivity) context).loadDataBoolean(context.getString(R.string.voiceOn))){
                                         ((MainActivity) context).playSoundStart();
                                     }
 
                                     boolean success = dataBaseHelper.addOne(moto);
-                                    Log.d("API_TEST_VOLLEY", String.valueOf(success));
+                                    Log.d("API_TEST_VOLLEY_FILL_MOTO", String.valueOf(success));
                                 }
 
                             }
@@ -114,12 +120,20 @@ public class MotoApiVolley implements MotoApi {
         );
 
         requestQueue.add(arrayRequest);
+        try{
+            //db.close();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     @Override
     public void addMoto(Moto1 moto) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
         String url = BASE_URL + "/moto";
 
         StringRequest request = new StringRequest(
@@ -131,7 +145,7 @@ public class MotoApiVolley implements MotoApi {
                     public void onResponse(String response) {
                         fillMoto();
                         getId();
-                        Log.d(API_TEST, response);
+                        Log.d("API_TEST_ADD_MOTO", response);
                     }
                 },
 
@@ -155,12 +169,15 @@ public class MotoApiVolley implements MotoApi {
         };
 
         requestQueue.add(request);
+        //db.close();
     }
 
     @Override
     public void getId() {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
         String url = BASE_URL + "/moto/id";
 
         StringRequest request = new StringRequest(
@@ -171,7 +188,7 @@ public class MotoApiVolley implements MotoApi {
                     @Override
                     public void onResponse(String response) {
                         ((MainActivity) context).saveDataInt("motoId", Integer.valueOf(response));
-                        Log.d(API_TEST, response);
+                        Log.d("API_TEST_GET_ID", response);
                     }
                 },
 
@@ -179,12 +196,15 @@ public class MotoApiVolley implements MotoApi {
         );
 
         requestQueue.add(request);
+        //db.close();
     }
 
     @Override
     public void updateMoto(long id, long idUser, int speed, float latitude, float longitude, float altitude) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
         String url = BASE_URL + "/moto/" + id;
 
         StringRequest stringRequest = new StringRequest(
@@ -194,6 +214,7 @@ public class MotoApiVolley implements MotoApi {
                     @Override
                     public void onResponse(String response) {
                         fillMoto();
+                        Log.d("API_TEST_UPDATE_MOTO", response);
                     }
                 },
                 errorListener
@@ -215,13 +236,15 @@ public class MotoApiVolley implements MotoApi {
         };
 
         requestQueue.add(stringRequest);
-
+        //db.close();
     }
 
     @Override
     public void getDistanceByMotoId(long id) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
         String url = BASE_URL + "/moto/distance/" + id;
 
         StringRequest request = new StringRequest(
@@ -249,12 +272,15 @@ public class MotoApiVolley implements MotoApi {
         };
 
         requestQueue.add(request);
+        //db.close();
     }
 
     @Override
     public void getNameByMoto(long id) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
         String url = BASE_URL + "/moto/name/" + id;
 
         StringRequest request = new StringRequest(
@@ -273,13 +299,15 @@ public class MotoApiVolley implements MotoApi {
         );
 
         requestQueue.add(request);
-
+        //db.close();
     }
 
     @Override
     public void deleteMoto(long id) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
         String url = BASE_URL + "/moto/" + id;
 
         StringRequest stringRequest = new StringRequest(
@@ -297,13 +325,14 @@ public class MotoApiVolley implements MotoApi {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("id", String.valueOf(id));
-                return params;
+                    Map<String, String> params = new HashMap<>();
+                    params.put("id", String.valueOf(id));
+                    return params;
             }
         };
 
         requestQueue.add(stringRequest);
+        //db.close();
     }
 
     private double calculateDistance(double Alat, double Alon, float Blat, float Blon) {

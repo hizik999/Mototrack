@@ -2,6 +2,7 @@ package com.example.project_map_curr_location;
 
 import android.Manifest;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -9,6 +10,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -213,19 +216,16 @@ public class MainActivity extends AppCompatActivity {
 
                     updateGPS();
 
-                    String status;
-                    if (loadDataInt("car_or_moto") == 0) {
-                        status = "car";
-                    } else {
-                        status = "moto";
-                    }
-
-//                    new UserApiVolley(MainActivity.this).fillUser();
-
                     if (loadDataInt(getString(R.string.car_or_moto)) == 0) {
 
                         int c = loadDataInt("motoCount");
-                        new MotoApiVolley(MainActivity.this).fillMoto();
+
+                        try {
+                            new MotoApiVolley(MainActivity.this).fillMoto();
+                        } catch (Exception e){
+                            e.printStackTrace();
+                        }
+
                         if (c < loadDataInt("motoCount")){
                             playSoundStart();
                             saveDataInt("motoCount", c);
@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
 //                        );
                     }
                     try {
-                        sleep(1 * 1000);
+                        sleep(2 * 1000);
                         //db.close();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -614,5 +614,26 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = getPreferences(MODE_PRIVATE);
         String value = sharedPreferences.getString(key, "");
         return value;
+    }
+
+    public static boolean hasConnection(final Context context)
+    {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (wifiInfo != null && wifiInfo.isConnected())
+        {
+            return true;
+        }
+        wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if (wifiInfo != null && wifiInfo.isConnected())
+        {
+            return true;
+        }
+        wifiInfo = cm.getActiveNetworkInfo();
+        if (wifiInfo != null && wifiInfo.isConnected())
+        {
+            return true;
+        }
+        return false;
     }
 }

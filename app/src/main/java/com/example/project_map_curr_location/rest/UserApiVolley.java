@@ -3,6 +3,7 @@ package com.example.project_map_curr_location.rest;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -47,6 +48,7 @@ public class UserApiVolley implements UserApi{
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(API_TEST, error.toString());
+                Toast.makeText(context, "Нет подключения к Интернету, \nданные не актуальны", 5).show();
             }
         };
         arrayList = new ArrayList<>();
@@ -55,7 +57,9 @@ public class UserApiVolley implements UserApi{
     @Override
     public void fillUser() {
 
-        requestQueue = Volley.newRequestQueue(context);
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
         String url = BASE_URL + "/user";
 
         dataBaseHelper = new DataBaseHelper(context);
@@ -98,7 +102,9 @@ public class UserApiVolley implements UserApi{
     @Override
     public void addUser(User user) {
 
-        requestQueue = Volley.newRequestQueue(context);
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
         String url = BASE_URL + "/user";
 
         StringRequest request = new StringRequest(
@@ -146,7 +152,9 @@ public class UserApiVolley implements UserApi{
     @Override
     public void updateUser(long id, String name, String nickname, String email, String status) {
 
-        requestQueue = Volley.newRequestQueue(context);
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
         String url = BASE_URL + "/user/" + id;
 
         StringRequest stringRequest = new StringRequest(
@@ -181,7 +189,9 @@ public class UserApiVolley implements UserApi{
     @Override
     public long getNewId() {
 
-        requestQueue = Volley.newRequestQueue(context);
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
         String url = BASE_URL + "/user/id";
 
         StringRequest request = new StringRequest(
@@ -199,7 +209,9 @@ public class UserApiVolley implements UserApi{
                 errorListener
         );
 
-        requestQueue.add(request);
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(context);
+        }
 
         return 0;
     }

@@ -45,6 +45,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 //        db.execSQL("CREATE TABLE IF NOT EXISTS moto (id NUMERIC PRIMARY KEY AUTOINCREMENT, " +
 //                "user_id NUMERIC, speed INTEGER, latitude VARCHAR, longitude VARCHAR, altitude VARCHAR)");
         // добавление начальных данных
+
     }
 
     @Override
@@ -52,6 +53,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS moto");
         db.execSQL("DROP TABLE IF EXISTS user");
         onCreate(db);
+        db.close();
     }
 
     public boolean addOne(Moto1 moto) {
