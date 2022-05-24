@@ -209,10 +209,8 @@ public class UserApiVolley implements UserApi{
                 errorListener
         );
 
-        if (requestQueue == null) {
-            requestQueue = Volley.newRequestQueue(context);
-        }
+        requestQueue.add(request);
 
-        return 0;
+        return ((MainActivity) context).loadDataInt("userId");
     }
 }

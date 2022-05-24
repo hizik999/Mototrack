@@ -110,18 +110,7 @@ public class SettingsFragment3 extends Fragment {
 
                 ((MainActivity) context).saveDataString(getString(R.string.userNickname), String.valueOf(et_name.getText()));
 
-                String status;
-                if (((MainActivity) context).loadDataInt("car_or_moto") == 0) {
-                    status = "car";
-                } else {
-                    status = "moto";
-                }
 
-                new UserApiVolley(getContext()).updateUser(
-                        ((MainActivity) context).loadDataInt("userId"),
-                        "",
-                        ((MainActivity) context).loadDataString(getString(R.string.userNickname)), "", status
-                );
 
             }
         });
@@ -219,6 +208,8 @@ public class SettingsFragment3 extends Fragment {
 
 
                 } else {
+
+
                     if ((btnCar.isSelected() || btnMoto.isSelected())
                             && (btnVoiceOn.isSelected() || btnVoiceOff.isSelected())
                             && (btnNotificationOn.isSelected() || btnNotificationOff.isSelected())

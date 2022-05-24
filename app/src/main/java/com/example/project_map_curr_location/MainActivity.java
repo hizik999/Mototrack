@@ -125,12 +125,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (loadDataBoolean(getString(R.string.userLogged))) {
-
-            new UserApiVolley(this).updateUser(loadDataInt("userId"), "", loadDataString(getString(R.string.userNickname)), "", status);
             Toast.makeText(this, "User logged true: " + String.valueOf(loadDataInt("userId")), Toast.LENGTH_SHORT).show();
             //saveDataBoolean(getString(R.string.userLogged), false);   //на случай перезапуска сервера
         } else {
 
+            new UserApiVolley(this).getNewId();
             User user = new User("", loadDataString(getString(R.string.userNickname)), "", status);
             new UserApiVolley(this).addUser(user);
 
@@ -250,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
 //                        );
                     }
                     try {
-                        sleep(2 * 1000);
+                        sleep(3 * 1000);
                         //db.close();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -263,10 +262,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUIVAluses(Location location) {
-        saveDataFloat(getString(R.string.actualCameraPositionLat), (float) location.getLatitude());
-        saveDataFloat(getString(R.string.actualCameraPositionLon), (float) location.getLongitude());
-        saveDataInt(getString(R.string.actualSpeed), (int) location.getSpeed());
-        saveDataFloat(getString(R.string.actualCameraPositionAlt), (float) location.getAltitude());
+        try {
+            saveDataFloat(getString(R.string.actualCameraPositionLat), (float) location.getLatitude());
+            saveDataFloat(getString(R.string.actualCameraPositionLon), (float) location.getLongitude());
+            saveDataInt(getString(R.string.actualSpeed), (int) location.getSpeed());
+            saveDataFloat(getString(R.string.actualCameraPositionAlt), (float) location.getAltitude());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
         //Toast.makeText(getApplicationContext(), loadDataFloat(getString(R.string.actualCameraPositionLat)) + ": " + loadDataFloat(getString(R.string.actualCameraPositionLon)), Toast.LENGTH_SHORT).show();
     }
 
@@ -536,7 +540,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             Intent intentMainActivity = new Intent(this, MainActivity.class);
-            PendingIntent pIntentMainActivity = PendingIntent.getActivity(this, 0, intentMainActivity, 0);
+            PendingIntent pIntentMainActivity = PendingIntent.getActivity(this, 0, intentMainActivity, PendingIntent.FLAG_MUTABLE);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_settings)

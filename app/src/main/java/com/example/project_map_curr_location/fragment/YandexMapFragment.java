@@ -11,16 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 
-import com.example.project_map_curr_location.database.DataBaseHelper;
 import com.example.project_map_curr_location.MainActivity;
 import com.example.project_map_curr_location.R;
+import com.example.project_map_curr_location.database.DataBaseHelper;
 import com.example.project_map_curr_location.domain.Moto1;
 import com.yandex.mapkit.GeoObjectCollection;
 import com.yandex.mapkit.MapKit;
@@ -278,7 +277,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
                     try {
                         handler.post(runnable);
                         //handler.post(runnable2);
-                        sleep(1 * 1000);
+                        sleep(3 * 1000);
                         handler.post(runnable1);
                         //handler.post(runnable3);
                     } catch (Exception e) {
@@ -395,7 +394,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
             errorMessage = "ну ты и балда";
         }
 
-        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -478,7 +477,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
                     errorMessage = "ну ты и балда";
                 }
 
-                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
             }
         };
         drivingSession = drivingRouter.requestRoutes(requestPoints, drivingOptions, vehicleOptions, drivingRouteListener);
