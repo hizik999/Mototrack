@@ -56,8 +56,6 @@ import com.yandex.mapkit.user_location.UserLocationObjectListener;
 import com.yandex.mapkit.user_location.UserLocationView;
 import com.yandex.runtime.Error;
 import com.yandex.runtime.image.ImageProvider;
-import com.yandex.runtime.network.NetworkError;
-import com.yandex.runtime.network.RemoteError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,16 +93,6 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
     private PlacemarkMapObject placemarkMapObject;
     private AppCompatButton btnLocation;
 
-//    private TrafficLevel trafficLevel = null;
-//    private enum TrafficFreshness {Loading, OK, Expired};
-//    private TrafficFreshness trafficFreshness;
-//    private Point start = new Point(55.6692509, 37.2849947);
-//    private Point end = new Point(55.733330, 37.587649);
-
-//    private Point screen_center = new Point(
-//            (start.getLatitude() + end.getLatitude()) / 2,
-//            (start.getLongitude() + end.getLongitude()) / 2);
-
     public YandexMapFragment(List<Moto1> motorcycleList) {
         this.motorcycleList = motorcycleList;
     }
@@ -125,7 +113,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View mainView = inflater.inflate(R.layout.fragment_yandex_map, null);
-//        Toast.makeText(context, "OnCreateView", Toast.LENGTH_SHORT).show();
+
         mapView = mainView.findViewById(R.id.mapView);
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED);
 
@@ -179,11 +167,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
         super.onViewCreated(view, savedInstanceState);
-//        Toast.makeText(context, "OnViewCreated", Toast.LENGTH_SHORT).show();
-
-
     }
 
     private List<PlacemarkMapObject> printMotos() {
@@ -208,11 +192,6 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
                 Log.d("DELETE_PLACEMARK", e.getMessage());
             }
 
-//            try {
-//                mapObjects.remove(placemarkMapObject);
-//            } catch (Exception e) {
-//                Log.d("DELETE_PLACEMARK", e.getMessage());
-//            }
         }
         return placemarkMapObjects;
     }
@@ -224,20 +203,6 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         }
     }
 
-//    private void printMotosAAA() {
-//
-//        dataBaseHelper = new DataBaseHelper(getContext());
-//
-//        List<Moto1> list = dataBaseHelper.getAllMoto();
-//
-//        for (Moto1 moto : motorcycleList) {
-//
-//            Point point = new Point(moto.getLatitude(), moto.getLongitude());
-//
-//            mapObjects.
-//        }
-//
-//    }
 
     private class MyThread123 extends Thread {
 
@@ -245,7 +210,6 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
         @Override
         public void run() {
-            //super.run();
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
@@ -259,27 +223,12 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
                     deleteMotos(placemarkMapObjects123);
                 }
             };
-            Runnable runnable2 = new Runnable() {
-                @Override
-                public void run() {
-                    String text = ((MainActivity) context).loadDataString(getString(R.string.findLocationEditText));
-                    submitQuery(text);
-                }
-            };
-            Runnable runnable3 = new Runnable() {
-                @Override
-                public void run() {
-                    mapObjects.clear();
-                }
-            };
             while (thread) {
                 if (((MainActivity) context).loadDataInt(getString(R.string.car_or_moto)) == 0) {
                     try {
                         handler.post(runnable);
-                        //handler.post(runnable2);
                         sleep(3 * 1000);
                         handler.post(runnable1);
-                        //handler.post(runnable3);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -340,34 +289,13 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         UserLocationObjectListener listener = new UserLocationObjectListener() {
             @Override
             public void onObjectAdded(@NonNull UserLocationView userLocationView) {
-                //printMotos();
+
                 userLocationLayer.setAnchor(
                         new PointF((float) (mapView.getWidth() * 0.5), (float) (mapView.getHeight() * 0.5)),
                         new PointF((float) (mapView.getWidth() * 0.5), (float) (mapView.getHeight() * 0.83)));
 
                 userLocationView.getArrow().setIcon(ImageProvider.fromResource(
                         context, R.drawable.user_arrow));
-
-
-//                CompositeIcon pinIcon = userLocationView.getPin().useCompositeIcon();
-
-//                pinIcon.setIcon(
-//                        "icon",
-//                        ImageProvider.fromResource(context, R.drawable.icon),
-//                        new IconStyle().setAnchor(new PointF(0f, 0f))
-//                                .setRotationType(RotationType.ROTATE)
-//                                .setZIndex(0f)
-//                                .setScale(1f)
-//                );
-
-//                pinIcon.setIcon(
-//                        "pin",
-//                        ImageProvider.fromResource(context, R.drawable.search_result),
-//                        new IconStyle().setAnchor(new PointF(0.5f, 0.5f))
-//                                .setRotationType(RotationType.ROTATE)
-//                                .setZIndex(1f)
-//                                .setScale(0.5f)
-//                );
 
                 userLocationView.getAccuracyCircle().setFillColor(Color.BLUE & 0x99ffffff);
             }
@@ -387,14 +315,8 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
     @Override
     public void onSearchError(@NonNull Error error) {
-        String errorMessage = "ну ты и балда";
-        if (error instanceof RemoteError) {
-            errorMessage = "ну ты и балда";
-        } else if (error instanceof NetworkError) {
-            errorMessage = "ну ты и балда";
-        }
 
-        //Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
@@ -411,7 +333,7 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
         }
     }
 
-    //search, suggest, jams
+
     @Override
     public void onStop() {
         mapView.onStop();
@@ -470,18 +392,11 @@ public class YandexMapFragment extends Fragment implements Session.SearchListene
 
             @Override
             public void onDrivingRoutesError(@NonNull Error error) {
-                String errorMessage = "ну ты и балда";
-                if (error instanceof RemoteError) {
-                    errorMessage = "ну ты и балда";
-                } else if (error instanceof NetworkError) {
-                    errorMessage = "ну ты и балда";
-                }
 
-                //Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
             }
         };
         drivingSession = drivingRouter.requestRoutes(requestPoints, drivingOptions, vehicleOptions, drivingRouteListener);
-        //printMotos();
+
     }
 
 

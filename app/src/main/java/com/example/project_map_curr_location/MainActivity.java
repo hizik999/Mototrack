@@ -2,7 +2,6 @@ package com.example.project_map_curr_location;
 
 import android.Manifest;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -10,8 +9,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.media.MediaPlayer;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -38,7 +35,6 @@ import com.example.project_map_curr_location.adapter.RVMotosAdapter;
 import com.example.project_map_curr_location.database.DataBaseHelper;
 import com.example.project_map_curr_location.domain.Moto1;
 import com.example.project_map_curr_location.domain.User;
-import com.example.project_map_curr_location.fragment.AccountFragment;
 import com.example.project_map_curr_location.fragment.FakeMopedFragment;
 import com.example.project_map_curr_location.fragment.MopedFragment;
 import com.example.project_map_curr_location.fragment.SettingsFragment3;
@@ -124,19 +120,12 @@ public class MainActivity extends AppCompatActivity {
             status = "car";
         }
 
-        if (loadDataBoolean(getString(R.string.userLogged))) {
-            Toast.makeText(this, "User logged true: " + String.valueOf(loadDataInt("userId")), Toast.LENGTH_SHORT).show();
-            //saveDataBoolean(getString(R.string.userLogged), false);   //на случай перезапуска сервера
-        } else {
-
+        if (!loadDataBoolean(getString(R.string.userLogged))) {
             new UserApiVolley(this).getNewId();
             User user = new User("", loadDataString(getString(R.string.userNickname)), "", status);
             new UserApiVolley(this).addUser(user);
-
-            Toast.makeText(this, "User logged false: " + String.valueOf(loadDataInt("userId")), Toast.LENGTH_SHORT).show();
             saveDataBoolean(getString(R.string.userLogged), true);
         }
-
 
         setMotorcycleArrayList();
         setBottomNavigation();
@@ -176,20 +165,6 @@ public class MainActivity extends AppCompatActivity {
         };
 
         new DataBaseHelper(this).onCreate(db);
-
-        //db.execSQL("DROP TABLE IF EXISTS moto ");
-//        new MotoApiVolley(this).fillMoto();
-//        new UserApiVolley(this).fillUser();
-//        new MotoApiVolley(this, db).fillMoto();
-//        User userById = new UserApiVolley(this).getUserById(1);
-//        Log.d("API_TEST", userById.getName());
-
-//        new MotoApiVolley(this).fillMoto();
-//        new MotoApiVolley(this).addMoto(
-//                new Moto1()
-//        );
-
-//
     }
 
     @Override
@@ -221,11 +196,11 @@ public class MainActivity extends AppCompatActivity {
 
                         try {
                             new MotoApiVolley(MainActivity.this).fillMoto();
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
-                        if (c < loadDataInt("motoCount")){
+                        if (c < loadDataInt("motoCount")) {
                             playSoundStart();
                             saveDataInt("motoCount", c);
                         }
@@ -240,17 +215,9 @@ public class MainActivity extends AppCompatActivity {
                                     loadDataFloat(getString(R.string.actualCameraPositionAlt)));
                         }
 
-//                        new UserApiVolley(MainActivity.this).updateUser(
-//                                loadDataInt("userId"),
-//                                "",
-//                                loadDataString(getString(R.string.userNickname)),
-//                                "",
-//                                status
-//                        );
                     }
                     try {
                         sleep(3 * 1000);
-                        //db.close();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -267,11 +234,10 @@ public class MainActivity extends AppCompatActivity {
             saveDataFloat(getString(R.string.actualCameraPositionLon), (float) location.getLongitude());
             saveDataInt(getString(R.string.actualSpeed), (int) location.getSpeed());
             saveDataFloat(getString(R.string.actualCameraPositionAlt), (float) location.getAltitude());
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        //Toast.makeText(getApplicationContext(), loadDataFloat(getString(R.string.actualCameraPositionLat)) + ": " + loadDataFloat(getString(R.string.actualCameraPositionLon)), Toast.LENGTH_SHORT).show();
     }
 
     private void startLocationUpdates() {
@@ -336,9 +302,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //тут не аккаунт, а настройки ((мне впадлу переписывать сори))
+        //тут не аккаунт, а настройки
 
-        fragment_account = new AccountFragment();
         btn_login = findViewById(R.id.btn_login);
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -356,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void speak() {
-        //РУССКИЙ НЕ РАБОТАЕТ
+
         Locale russian = new Locale("RU");
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -368,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
         } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "а?шо?", Toast.LENGTH_SHORT).show();
+
         }
     }
 
@@ -382,7 +347,7 @@ public class MainActivity extends AppCompatActivity {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String res = result.get(0);
                     et_FindLocation.setText((CharSequence) res);
-                    //Toast.makeText(getApplicationContext(), "ЗАСЕЙВИЛ" + res, Toast.LENGTH_SHORT).show();
+
                     saveDataString(getString(R.string.findLocationEditText), String.valueOf(res));
                 }
                 break;
@@ -460,8 +425,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setBottomNavigation() {
-//        fragment_map = new MapsFragment2(motorcycleArrayList);
-        //fragment_map = new MapsFragment2(motorcycleArrayList);
         fragment_map = new YandexMapFragment(motorcycleArrayList);
         fragment_settings = new SettingsFragment3();
         fragment_moped = new MopedFragment();
@@ -484,15 +447,12 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getId()) {
                     case 1:
-                        //new MotoApiVolley(MainActivity.this).fillMoto();
                         curr_fragment = fragment_settings;
                         break;
                     case 2:
-                        //new MotoApiVolley(MainActivity.this).fillMoto();
                         curr_fragment = fragment_map;
                         break;
                     case 3:
-                        //new MotoApiVolley(MainActivity.this).fillMoto();
                         if (loadDataInt(getString(R.string.car_or_moto)) == 1 || !loadDataBoolean(getString(R.string.tripStatus))) {
                             curr_fragment = fragment_fake_moped;
                         } else {
@@ -620,24 +580,4 @@ public class MainActivity extends AppCompatActivity {
         return value;
     }
 
-    public static boolean hasConnection(final Context context)
-    {
-        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (wifiInfo != null && wifiInfo.isConnected())
-        {
-            return true;
-        }
-        wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        if (wifiInfo != null && wifiInfo.isConnected())
-        {
-            return true;
-        }
-        wifiInfo = cm.getActiveNetworkInfo();
-        if (wifiInfo != null && wifiInfo.isConnected())
-        {
-            return true;
-        }
-        return false;
-    }
 }

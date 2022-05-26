@@ -48,7 +48,7 @@ public class UserApiVolley implements UserApi{
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(API_TEST, error.toString());
-                Toast.makeText(context, "Нет подключения к Интернету, \nданные не актуальны", 5).show();
+                Toast.makeText(context, "Нет подключения к Интернету, \nданные не актуальны", Toast.LENGTH_SHORT).show();
             }
         };
         arrayList = new ArrayList<>();
@@ -122,11 +122,6 @@ public class UserApiVolley implements UserApi{
 
                 errorListener
         )
-                // ВОТ ЭТА ХУЙНЯ НЕ РАБОТАЕТ ПОТОМУ ЧТО КОНТРОЛЛЕР ТРЕБУЕТ ПАРАМЕТРЫ НЕ СТРИНГ А ДРУГИЕ
-                // А КАК ЭТО ПОМЕНЯТЬ Я НЕ ЕБУ ОТ СЛОВА СОВСЕМ ПОМОГИТЕ
-
-                // я понял в чем ошибка: нужен user_id от созданного user, без него работать не будет
-                // исправление нужно дописать в UserApiVolley, где уже будет браться user и вставляться в moto
         {
             @Nullable
             @Override
@@ -134,7 +129,6 @@ public class UserApiVolley implements UserApi{
 
                 Map<String, String> params = new HashMap<>();
 
-                //params.put("id", String.valueOf(((MainActivity) context).loadDataInt("userId")));
                 params.put("name", "");
                 params.put("nickname", String.valueOf(((MainActivity) context).loadDataString("userNickname")));
                 params.put("email", "");

@@ -1,14 +1,12 @@
 package com.example.project_map_curr_location.fragment;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +17,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.project_map_curr_location.MainActivity;
 import com.example.project_map_curr_location.R;
-import com.example.project_map_curr_location.database.DataBaseHelper;
 import com.example.project_map_curr_location.domain.Moto1;
 import com.example.project_map_curr_location.domain.User;
 import com.example.project_map_curr_location.rest.MotoApiVolley;
@@ -36,9 +33,6 @@ public class SettingsFragment3 extends Fragment {
     private Context context;
     private AppCompatButton btn_startTrip;
     private AppCompatEditText et_name;
-
-    private DataBaseHelper dataBaseHelper;
-    private SQLiteDatabase db;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,46 +65,15 @@ public class SettingsFragment3 extends Fragment {
         et_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                ((MainActivity) context).saveDataString(getString(R.string.userNickname), String.valueOf(et_name.getText()));
-//
-//                String status;
-//                if (((MainActivity) context).loadDataInt("car_or_moto") == 0) {
-//                    status = "car";
-//                } else {
-//                    status = "moto";
-//                }
-//
-//                new UserApiVolley(getContext()).updateUser(
-//                        ((MainActivity) context).loadDataInt("userId"),
-//                        "",
-//                        ((MainActivity) context).loadDataString(getString(R.string.userNickname)), "", status
-//                );
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                ((MainActivity) context).saveDataString(getString(R.string.userNickname), String.valueOf(et_name.getText()));
-//
-//                String status;
-//                if (((MainActivity) context).loadDataInt("car_or_moto") == 0) {
-//                    status = "car";
-//                } else {
-//                    status = "moto";
-//                }
-//
-//                new UserApiVolley(getContext()).updateUser(
-//                        ((MainActivity) context).loadDataInt("userId"),
-//                        "",
-//                        ((MainActivity) context).loadDataString(getString(R.string.userNickname)), "", status
-//                );
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-
                 ((MainActivity) context).saveDataString(getString(R.string.userNickname), String.valueOf(et_name.getText()));
-
-
 
             }
         });
@@ -190,9 +153,7 @@ public class SettingsFragment3 extends Fragment {
             @Override
             public void onClick(View view) {
                 if (((MainActivity) context).loadDataBoolean(getString(R.string.tripStatus))) {
-                    Toast.makeText(getContext(), String.valueOf(((MainActivity) context).loadDataInt(getString(R.string.motoId))), Toast.LENGTH_SHORT).show();
                     new MotoApiVolley(getContext()).deleteMoto(((MainActivity) context).loadDataInt(getString(R.string.motoId)));
-                    Toast.makeText(context, "Вы отменили текущий маршрут", Toast.LENGTH_SHORT).show();
                     ((MainActivity) context).saveDataBoolean(getString(R.string.tripStatus), false);
                     btn_startTrip.setText(getText(R.string.startTripSuccess));
                     ((MainActivity) context).cancelNotification(notificationManager, 1);
@@ -259,7 +220,6 @@ public class SettingsFragment3 extends Fragment {
 
                         if (btnVoiceOn.isSelected()) {
                             ((MainActivity) context).saveDataBoolean(getString(R.string.voiceOn), true);
-                            //((MainActivity) context).playSoundStart();
                         } else {
                             ((MainActivity) context).saveDataBoolean(getString(R.string.voiceOn), false);
                         }
