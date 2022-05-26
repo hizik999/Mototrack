@@ -44,9 +44,6 @@ dependencies {
     implementation 'com.yandex.android:maps.mobile:4.0.0-full'
     //implementation 'com.yandex.android:maps.mobile:4.0.0-lite'
 
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.0.1'
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.5.0'
-
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.0'
     implementation 'nl.bryanderidder:themed-toggle-button-group:1.4.1'
     implementation 'com.jackandphantom.android:customtogglebutton:1.0.1'
