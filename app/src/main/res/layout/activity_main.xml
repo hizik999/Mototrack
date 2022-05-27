@@ -47,6 +47,7 @@
                     />
 
                 <androidx.appcompat.widget.AppCompatEditText
+                    android:textColor="@color/white"
                     android:padding="10dp"
                     android:id="@+id/et_FindLocation"
                     android:layout_width="match_parent"

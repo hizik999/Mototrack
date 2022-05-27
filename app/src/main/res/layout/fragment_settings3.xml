@@ -281,6 +281,7 @@
                     </nl.bryanderidder.themedtogglebuttongroup.ThemedToggleButtonGroup>
 
                     <androidx.appcompat.widget.AppCompatEditText
+                        android:textColor="@color/white"
                         android:inputType="text"
                         android:id="@+id/et_Name"
                         android:layout_width="300dp"
