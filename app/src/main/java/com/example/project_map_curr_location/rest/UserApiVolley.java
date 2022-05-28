@@ -32,7 +32,7 @@ public class UserApiVolley implements UserApi{
 
     public static final String API_TEST = "API_TEST";
     private final Context context;
-    public static final String BASE_URL = "http://192.168.1.110:2022";
+    public static final String BASE_URL = "http://78.40.217.59:2022";
     private Response.ErrorListener errorListener;
     private ArrayList<User> arrayList;
 
