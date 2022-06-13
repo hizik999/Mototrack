@@ -304,19 +304,19 @@ public class MainActivity extends AppCompatActivity {
 
         //тут не аккаунт, а настройки
 
-        btn_login = findViewById(R.id.btn_login);
-        btn_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (curr_fragment == fragment_account) {
-                    curr_fragment = fragment_map;
-                    loadFragment(curr_fragment);
-                    bottomNavigation.show(2, true);
-                } else {
-                    loadSettings();
-                }
-            }
-        });
+//        btn_login = findViewById(R.id.btn_login);
+//        btn_login.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (curr_fragment == fragment_account) {
+//                    curr_fragment = fragment_map;
+//                    loadFragment(curr_fragment);
+//                    bottomNavigation.show(2, true);
+//                } else {
+//                    loadSettings();
+//                }
+//            }
+//        });
     }
 
 
