@@ -48,6 +48,7 @@
                     android:layout_gravity="center"
                     android:inputType="text"
                     android:background="@drawable/layout_round_button"
+                    android:textColorHint="@color/grey_white"
                     />
 
                 <androidx.appcompat.widget.AppCompatImageButton

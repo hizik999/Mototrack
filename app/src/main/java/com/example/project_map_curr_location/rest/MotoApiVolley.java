@@ -1,18 +1,13 @@
 package com.example.project_map_curr_location.rest;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.util.Log;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-
-import com.android.volley.AuthFailureError;
+import androidx.annotation.NonNull;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -22,7 +17,6 @@ import com.example.project_map_curr_location.database.DataBaseHelper;
 import com.example.project_map_curr_location.domain.Moto1;
 import com.example.project_map_curr_location.domain.mapper.MotoMapper;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,38 +28,20 @@ public class MotoApiVolley implements MotoApi {
     public static final String API_TEST = "API_TEST_VOLLEY";
     private final Context context;
     public static final String BASE_URL = "http://78.40.217.59:2022";
-    private Response.ErrorListener errorListener;
+    private final Response.ErrorListener errorListener;
 
     private DataBaseHelper dataBaseHelper;
-//    private SQLiteDatabase db;
-    private Cursor cursor;
-    private SimpleCursorAdapter userAdapter;
     private RequestQueue requestQueue;
 
     public MotoApiVolley(Context context) {
         this.context = context;
 
-        errorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(API_TEST, error.toString());
-                Toast.makeText(context.getApplicationContext(), "Нет подключения к Интернету, \nданные не актуальны", 5).show();
+        errorListener = error -> {
+            Log.d(API_TEST, error.toString());
+            Toast.makeText(context.getApplicationContext(), ((MainActivity) context).getString(R.string.no_connection), 5).show();
 
-            }
         };
     }
-
-//    public MotoApiVolley(Context context, SQLiteDatabase db) {
-//        this.context = context;
-//        this.db = db;
-//
-//        errorListener = new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Log.d(API_TEST, error.toString());
-//            }
-//        };
-//    }
 
     @Override
     public void fillMoto() {
@@ -73,58 +49,47 @@ public class MotoApiVolley implements MotoApi {
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(context);
         }
-
-
         String url = BASE_URL + "/moto";
-
         dataBaseHelper = new DataBaseHelper(context);
-
         JsonArrayRequest arrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 url,
                 null,
 
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        dataBaseHelper.dropTableMoto();
-                        try {
-                            int c = 0;
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject jsonObject = response.getJSONObject(i);
-                                Moto1 moto = MotoMapper.motoFromJson(jsonObject);
+                response -> {
+                    dataBaseHelper.dropTableMoto();
+                    try {
+                        int c = 0;
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject jsonObject = response.getJSONObject(i);
+                            Moto1 moto = MotoMapper.motoFromJson(jsonObject);
 
-                                if (((int) calculateDistance(moto.getLatitude(), moto.getLongitude(),
-                                        ((MainActivity) context).loadDataFloat("actualCameraPositionLat"),
-                                        ((MainActivity) context).loadDataFloat("actualCameraPositionLon")))
-                                        < 1000) {
-                                    c ++;
+                            //для того, чтобы юзер не видел ненужных ему мотоциклистов
+                            // (т.е. тех, которые находятся на расстоянии больше 1км), используется заполнение бд с условием расстояния
+                            if (((int) calculateDistance(moto.getLatitude(), moto.getLongitude(),
+                                    ((MainActivity) context).loadDataFloat(((MainActivity) context).getString(R.string.actualCameraPositionLat)),
+                                    ((MainActivity) context).loadDataFloat(((MainActivity) context).getString(R.string.actualCameraPositionLon)))
+                                    < 1000)) {
+                                c ++;
 
-                                    if (c > ((MainActivity) context).loadDataInt("motoCount") && ((MainActivity) context).loadDataBoolean(context.getString(R.string.voiceOn))){
-                                        ((MainActivity) context).playSoundStart();
-                                    }
-
-                                    boolean success = dataBaseHelper.addOne(moto);
-                                    Log.d("API_TEST_VOLLEY_FILL_MOTO", String.valueOf(success));
+                                if (c > ((MainActivity) context).loadDataInt("motoCount") && ((MainActivity) context).loadDataBoolean(context.getString(R.string.voiceOn))){
+                                    ((MainActivity) context).playSoundStart();
                                 }
 
+                                boolean success = dataBaseHelper.addOne(moto);
+                                Log.d("API_TEST_VOLLEY_FILL", String.valueOf(success));
                             }
-                            ((MainActivity) context).saveDataInt("motoCount", c);
-                            //Toast.makeText(context, String.valueOf(((MainActivity) context).loadDataInt("motoCount")) , Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+
                         }
+                        ((MainActivity) context).saveDataInt("motoCount", c);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
                 errorListener
         );
 
         requestQueue.add(arrayRequest);
-        try{
-            //db.close();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
 
     }
 
@@ -140,24 +105,20 @@ public class MotoApiVolley implements MotoApi {
                 Request.Method.POST,
                 url,
 
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        fillMoto();
-                        getId();
-                        Log.d("API_TEST_ADD_MOTO", response);
-                    }
+                response -> {
+                    fillMoto();
+                    getId();
+                    Log.d("API_TEST_ADD_MOTO", response);
                 },
 
                 errorListener
         ) {
-            @Nullable
+            @NonNull
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+            protected Map<String, String> getParams(){
 
                 Map<String, String> params = new HashMap<>();
 
-                //params.put("user_id", String.valueOf(moto.getUser().getId()));
                 params.put("user_id", String.valueOf(((MainActivity) context).loadDataInt("userId")));
                 params.put("speed", String.valueOf(moto.getSpeed()));
                 params.put("latitude", String.valueOf(moto.getLatitude()));
@@ -169,7 +130,6 @@ public class MotoApiVolley implements MotoApi {
         };
 
         requestQueue.add(request);
-        //db.close();
     }
 
     @Override
@@ -184,19 +144,15 @@ public class MotoApiVolley implements MotoApi {
                 Request.Method.GET,
                 url,
 
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        ((MainActivity) context).saveDataInt("motoId", Integer.valueOf(response));
-                        Log.d("API_TEST_GET_ID", response);
-                    }
+                response -> {
+                    ((MainActivity) context).saveDataInt("motoId", Integer.parseInt(response));
+                    Log.d("API_TEST_GET_ID", response);
                 },
 
                 errorListener
         );
 
         requestQueue.add(request);
-        //db.close();
     }
 
     @Override
@@ -210,18 +166,15 @@ public class MotoApiVolley implements MotoApi {
         StringRequest stringRequest = new StringRequest(
                 Request.Method.PUT,
                 url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        fillMoto();
-                        Log.d("API_TEST_UPDATE_MOTO", response);
-                    }
+                response -> {
+                    fillMoto();
+                    Log.d("API_TEST_UPDATE_MOTO", response);
                 },
                 errorListener
         ) {
-            @Nullable
+            @NonNull
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+            protected Map<String, String> getParams() {
 
                 Map<String, String> params = new HashMap<>();
                 params.put("id", String.valueOf(id));
@@ -236,7 +189,6 @@ public class MotoApiVolley implements MotoApi {
         };
 
         requestQueue.add(stringRequest);
-        //db.close();
     }
 
     @Override
@@ -250,18 +202,15 @@ public class MotoApiVolley implements MotoApi {
         StringRequest request = new StringRequest(
                 Request.Method.GET,
                 url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        ((MainActivity) context).saveDataFloat("lastMotoDistance", Float.valueOf(response));
-                        Log.d("DISTANCE", String.valueOf(Float.valueOf(response)));
-                    }
+                response -> {
+                    ((MainActivity) context).saveDataFloat("lastMotoDistance", Float.parseFloat(response));
+                    Log.d("DISTANCE", String.valueOf(Float.valueOf(response)));
                 },
                 errorListener
         ) {
-            @Nullable
+            @NonNull
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+            protected Map<String, String> getParams() {
 
                 Map<String, String> params = new HashMap<>();
                 params.put("endLat", String.valueOf(((MainActivity) context).loadDataFloat("actualCameraPositionLat")));
@@ -272,7 +221,6 @@ public class MotoApiVolley implements MotoApi {
         };
 
         requestQueue.add(request);
-        //db.close();
     }
 
     @Override
@@ -287,19 +235,16 @@ public class MotoApiVolley implements MotoApi {
                 Request.Method.GET,
                 url,
 
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        ((MainActivity) context).saveDataString("lastMotoName", String.valueOf(response));
-                        Log.d("MOTO_NAME", response);
-                    }
+                response -> {
+                    ((MainActivity) context).saveDataString("lastMotoName", String.valueOf(response));
+                    Log.d("MOTO_NAME", response);
                 },
 
                 errorListener
         );
 
         requestQueue.add(request);
-        //db.close();
+
     }
 
     @Override
@@ -313,18 +258,15 @@ public class MotoApiVolley implements MotoApi {
         StringRequest stringRequest = new StringRequest(
                 Request.Method.DELETE,
                 url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        fillMoto();
-                        ((MainActivity) context).saveDataInt("motoId", -1);
-                    }
+                response -> {
+                    fillMoto();
+                    ((MainActivity) context).saveDataInt("motoId", -1);
                 },
                 errorListener
         ) {
-            @Nullable
+            @NonNull
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+            protected Map<String, String> getParams() {
                     Map<String, String> params = new HashMap<>();
                     params.put("id", String.valueOf(id));
                     return params;
@@ -332,9 +274,10 @@ public class MotoApiVolley implements MotoApi {
         };
 
         requestQueue.add(stringRequest);
-        //db.close();
+
     }
 
+    //метод по калькуляции дистанции от юзера до мотоцикла
     private double calculateDistance(double Alat, double Alon, float Blat, float Blon) {
 
         final long EARTH_RADIUS = 6372795;

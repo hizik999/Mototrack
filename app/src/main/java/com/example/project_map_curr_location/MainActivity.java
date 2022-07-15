@@ -5,18 +5,14 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
-import android.speech.SpeechRecognizer;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,7 +27,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
-import com.example.project_map_curr_location.adapter.RVMotosAdapter;
 import com.example.project_map_curr_location.database.DataBaseHelper;
 import com.example.project_map_curr_location.domain.Moto1;
 import com.example.project_map_curr_location.domain.User;
@@ -42,11 +37,8 @@ import com.example.project_map_curr_location.fragment.YandexMapFragment;
 import com.example.project_map_curr_location.rest.MotoApiVolley;
 import com.example.project_map_curr_location.rest.UserApiVolley;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,20 +49,15 @@ public class MainActivity extends AppCompatActivity {
 
 
     private static final int REQUEST_CODE_SPEECH_INPUT = 1000;
-    private final String NOTIFICATION_CHANNEL_ID = "123";
     private static final int RecordAudioRequestCode = 201;
     private FragmentManager fm = getSupportFragmentManager();
     private Fragment fragment_map;
     private Fragment fragment_settings;
     private Fragment fragment_moped;
     private Fragment curr_fragment;
-    private Fragment fragment_account;
     private Fragment fragment_fake_moped;
 
-    private SpeechRecognizer speechRecognizer;
     private AppCompatEditText et_FindLocation;
-    private AppCompatImageButton btn_findLocationMicro;
-    private AppCompatImageButton btn_login;
 
     private SharedPreferences sharedPreferences;
 
@@ -78,21 +65,11 @@ public class MainActivity extends AppCompatActivity {
 
     private MediaPlayer sound;
 
-    private DataBaseHelper dataBaseHelper;
-    private SQLiteDatabase db;
-    private Cursor cursor;
-    private SimpleCursorAdapter userAdapter;
-
-    private FusedLocationProviderClient fusedLocationProviderClient;
-    private LocationRequest locationRequest;
-    private LocationCallback locationCallBack;
     public static final int DEFAULT_UPDATE_INTERVAL = 30;
     public static final int FASTEST_UPDATE_INTERVAL = 5;
-    private static final int PERMISSONS_FINE_LOCATION = 100;
+    private static final int PERMISSIONS_FINE_LOCATION = 100;
     private boolean geoStatus;
     private Thread geoThread = new MyTread();
-
-    private static final int request_Code = 101;
 
     private List<Moto1> motorcycleArrayList;
 
@@ -102,13 +79,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         geoStatus = true;
         SQLiteDatabase db = getBaseContext().openOrCreateDatabase("app1.db", MODE_PRIVATE, null);
-        dataBaseHelper = new DataBaseHelper(getApplicationContext());
         Thread geoThread = new MyTread();
         geoThread.setDaemon(true);
         geoThread.start();
 
         int s = loadDataInt(getString(R.string.car_or_moto));
-        String status = " ";
+        String status;
 
         if (loadDataBoolean(getString(R.string.tripStatus))) {
             if (s == 0) {
@@ -129,10 +105,10 @@ public class MainActivity extends AppCompatActivity {
 
         setMotorcycleArrayList();
         setBottomNavigation();
-        RVMotosAdapter rvMotosAdapter = new RVMotosAdapter(this, motorcycleArrayList);
         micAndLogin();
         et_FindLocation = findViewById(R.id.et_FindLocation);
         et_FindLocation.setHint(R.string.inputAddressEditText);
+
         et_FindLocation.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -152,17 +128,10 @@ public class MainActivity extends AppCompatActivity {
 
         et_FindLocation.setText(loadDataString(getString(R.string.findLocationEditText)));
 
-        locationRequest = new LocationRequest();
+        LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(1000 * DEFAULT_UPDATE_INTERVAL);
         locationRequest.setFastestInterval(1000 * FASTEST_UPDATE_INTERVAL);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        locationCallBack = new LocationCallback() {
-            @Override
-            public void onLocationResult(@NonNull LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                updateUIVAluses(locationResult.getLastLocation());
-            }
-        };
 
         new DataBaseHelper(this).onCreate(db);
     }
@@ -240,45 +209,28 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void startLocationUpdates() {
-
-        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
-        updateGPS();
-    }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        switch (requestCode) {
-            case PERMISSONS_FINE_LOCATION:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    updateGPS();
-                } else {
-                    Toast.makeText(MainActivity.this, "no GPS!", Toast.LENGTH_SHORT).show();
-//                    finish();
-                }
+        if (requestCode == PERMISSIONS_FINE_LOCATION) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                updateGPS();
+            } else {
+                Toast.makeText(MainActivity.this, "no GPS!", Toast.LENGTH_SHORT).show();
+            }
         }
 
     }
 
     private void updateGPS() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    updateUIVAluses(location);
-                }
-            });
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, this::updateUIVAluses);
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSONS_FINE_LOCATION);
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_FINE_LOCATION);
             }
         }
     }
@@ -291,32 +243,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void micAndLogin() {
         et_FindLocation = findViewById(R.id.et_FindLocation);
-        btn_findLocationMicro = findViewById(R.id.btn_findLocationMicro);
+        AppCompatImageButton btn_findLocationMicro = findViewById(R.id.btn_findLocationMicro);
 
 
-        btn_findLocationMicro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkPermission();
-                speak();
-            }
+        btn_findLocationMicro.setOnClickListener(view -> {
+            checkPermission();
+            speak();
         });
-
-        //тут не аккаунт, а настройки
-
-//        btn_login = findViewById(R.id.btn_login);
-//        btn_login.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (curr_fragment == fragment_account) {
-//                    curr_fragment = fragment_map;
-//                    loadFragment(curr_fragment);
-//                    bottomNavigation.show(2, true);
-//                } else {
-//                    loadSettings();
-//                }
-//            }
-//        });
     }
 
 
@@ -332,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
     }
@@ -341,16 +274,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode) {
-            case REQUEST_CODE_SPEECH_INPUT:
-                if (resultCode == RESULT_OK && data != null) {
-                    ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    String res = result.get(0);
-                    et_FindLocation.setText((CharSequence) res);
+        if (requestCode == REQUEST_CODE_SPEECH_INPUT) {
+            if (resultCode == RESULT_OK && data != null) {
+                ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                String res = result.get(0);
+                et_FindLocation.setText((CharSequence) res);
 
-                    saveDataString(getString(R.string.findLocationEditText), String.valueOf(res));
-                }
-                break;
+                saveDataString(getString(R.string.findLocationEditText), String.valueOf(res));
+            }
         }
 
 
@@ -387,22 +318,6 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigation.show(2, true);
     }
 
-    public void loadMapInt(int position) {
-        Bundle bundle = new Bundle();
-        curr_fragment = fragment_map;
-        if (loadDataBoolean("map_animation")) {
-            bundle.putInt("position", position);
-            curr_fragment.setArguments(bundle);
-        }
-        fm.beginTransaction().replace(R.id.frame_layout, curr_fragment).addToBackStack(null).commit();
-        bottomNavigation.show(2, true);
-    }
-
-    private void loadApp() {
-        fm.beginTransaction().replace(R.id.frame_layout, fragment_map).addToBackStack(null).commit();
-        bottomNavigation.show(2, true);
-    }
-
     public void loadFragment(Fragment fragment) {
         fm.beginTransaction().replace(R.id.frame_layout, fragment).addToBackStack(null).commit();
     }
@@ -417,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (curr_fragment == fragment_map) {
             finish();
-        } else if (curr_fragment != fragment_map) {
+        } else {
             curr_fragment = fragment_map;
             loadFragment(curr_fragment);
             bottomNavigation.show(2, true);
@@ -441,45 +356,35 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigation.add(new MeowBottomNavigation.Model(2, R.drawable.ic_map));
         bottomNavigation.add(new MeowBottomNavigation.Model(3, R.drawable.ic_moped));
 
-        bottomNavigation.setOnShowListener(new MeowBottomNavigation.ShowListener() {
-            @Override
-            public void onShowItem(MeowBottomNavigation.Model item) {
+        bottomNavigation.setOnShowListener(item -> {
 
-                switch (item.getId()) {
-                    case 1:
-                        curr_fragment = fragment_settings;
-                        break;
-                    case 2:
-                        curr_fragment = fragment_map;
-                        break;
-                    case 3:
-                        if (loadDataInt(getString(R.string.car_or_moto)) == 1 || !loadDataBoolean(getString(R.string.tripStatus))) {
-                            curr_fragment = fragment_fake_moped;
-                        } else {
-                            curr_fragment = fragment_moped;
-                        }
-                        break;
-                }
-
-                loadFragment(curr_fragment);
+            switch (item.getId()) {
+                case 1:
+                    curr_fragment = fragment_settings;
+                    break;
+                case 2:
+                    curr_fragment = fragment_map;
+                    break;
+                case 3:
+                    if (loadDataInt(getString(R.string.car_or_moto)) == 1 || !loadDataBoolean(getString(R.string.tripStatus))) {
+                        curr_fragment = fragment_fake_moped;
+                    } else {
+                        curr_fragment = fragment_moped;
+                    }
+                    break;
             }
+
+            loadFragment(curr_fragment);
         });
 
         bottomNavigation.show(2, true);
 
-        bottomNavigation.setOnClickMenuListener(new MeowBottomNavigation.ClickListener() {
+        bottomNavigation.setOnClickMenuListener(item -> {
 
-            @Override
-            public void onClickItem(MeowBottomNavigation.Model item) {
-
-            }
         });
 
-        bottomNavigation.setOnReselectListener(new MeowBottomNavigation.ReselectListener() {
-            @Override
-            public void onReselectItem(MeowBottomNavigation.Model item) {
+        bottomNavigation.setOnReselectListener(item -> {
 
-            }
         });
     }
 
@@ -492,16 +397,18 @@ public class MainActivity extends AppCompatActivity {
             int x = loadDataInt("car_or_moto");
             CharSequence title = getText(R.string.notification_title_car);
             CharSequence desc = getText(R.string.notification_desc_car);
-            switch (x) {
-                case 1:
-                    desc = getText(R.string.notification_desc_moto);
-                    title = getText(R.string.notification_title_moto);
-                    break;
+            if (x == 1) {
+                desc = getText(R.string.notification_desc_moto);
+                title = getText(R.string.notification_title_moto);
             }
 
             Intent intentMainActivity = new Intent(this, MainActivity.class);
-            PendingIntent pIntentMainActivity = PendingIntent.getActivity(this, 0, intentMainActivity, PendingIntent.FLAG_MUTABLE);
+            PendingIntent pIntentMainActivity = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                pIntentMainActivity = PendingIntent.getActivity(this, 0, intentMainActivity, PendingIntent.FLAG_MUTABLE);
+            }
 
+            String NOTIFICATION_CHANNEL_ID = "123";
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_settings)
                     .setContentTitle(title)
@@ -522,7 +429,7 @@ public class MainActivity extends AppCompatActivity {
     public void cancelNotification(NotificationManagerCompat notificationManager, int id) {
         try {
             notificationManager.cancel(id);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
 
@@ -537,8 +444,7 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean loadDataBoolean(String key) {
         sharedPreferences = getPreferences(MODE_PRIVATE);
-        boolean b = sharedPreferences.getBoolean(key, false);
-        return b;
+        return sharedPreferences.getBoolean(key, false);
     }
 
     public void saveDataInt(String key, int value) {
@@ -550,8 +456,7 @@ public class MainActivity extends AppCompatActivity {
 
     public int loadDataInt(String key) {
         sharedPreferences = getPreferences(MODE_PRIVATE);
-        int value = sharedPreferences.getInt(key, -1);
-        return value;
+        return sharedPreferences.getInt(key, -1);
     }
 
     public void saveDataFloat(String key, float value) {
@@ -563,8 +468,7 @@ public class MainActivity extends AppCompatActivity {
 
     public float loadDataFloat(String key) {
         sharedPreferences = getPreferences(MODE_PRIVATE);
-        float value = sharedPreferences.getFloat(key, 0.0F);
-        return value;
+        return sharedPreferences.getFloat(key, 0.0F);
     }
 
     public void saveDataString(String key, String value) {
@@ -576,8 +480,7 @@ public class MainActivity extends AppCompatActivity {
 
     public String loadDataString(String key) {
         sharedPreferences = getPreferences(MODE_PRIVATE);
-        String value = sharedPreferences.getString(key, "");
-        return value;
+        return sharedPreferences.getString(key, "");
     }
 
 }

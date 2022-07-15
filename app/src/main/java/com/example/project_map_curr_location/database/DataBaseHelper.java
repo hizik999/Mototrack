@@ -8,8 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-
 import com.example.project_map_curr_location.domain.Moto1;
 import com.example.project_map_curr_location.domain.User;
 
@@ -19,84 +17,90 @@ import java.util.List;
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "app1.db"; // название бд
     private static final int SCHEMA = 1; // версия базы данных
-    private Context context;
+
+    private static final String TABLE_MOTO = "moto";
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_USER_ID = "user_id";
+    private static final String COLUMN_SPEED = "speed";
+    private static final String COLUMN_LAT = "latitude";
+    private static final String COLUMN_LON = "longitude";
+    private static final String COLUMN_ALT = "altitude";
 
 
-    public DataBaseHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, "app1.db", null, 1);
-    }
+    private static final String TABLE_USER = "user";
+    private static final String COLUMN_NAME = "name";
+    private static final String COLUMN_NICKNAME = "nickname";
+    private static final String COLUMN_EMAIL = "email";
+    private static final String COLUMN_STATUS = "status";
 
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, SCHEMA);
-        this.context = context;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-//        db.execSQL("DELETE FROM moto");
-        String createTableMotoStatement = "CREATE TABLE IF NOT EXISTS moto (id NUMERIC, " +
-                "user_id NUMERIC, speed INTEGER, latitude VARCHAR, longitude VARCHAR, altitude VARCHAR)";
-        String createTableUserStatement = "CREATE TABLE IF NOT EXISTS user (id NUMERIC, " +
-                "name VARCHAR, nickname VARCHAR, email VARCHAR, status VARCHAR)";
+        String createTableMotoStatement = "CREATE TABLE IF NOT EXISTS " + TABLE_MOTO +
+                " (" + COLUMN_ID + " NUMERIC, " + COLUMN_USER_ID + " NUMERIC, " + COLUMN_SPEED + " INTEGER, " +
+                COLUMN_LAT + " VARCHAR, " + COLUMN_LON + " VARCHAR, " + COLUMN_ALT + " VARCHAR)";
+
+        String createTableUserStatement = "CREATE TABLE IF NOT EXISTS " + TABLE_USER + " (" + COLUMN_ID + " NUMERIC, " + COLUMN_NAME + " VARCHAR, "
+                + COLUMN_NICKNAME + " VARCHAR, " + COLUMN_EMAIL + " VARCHAR, " + COLUMN_STATUS + " VARCHAR)";
 
         db.execSQL(createTableMotoStatement);
         db.execSQL(createTableUserStatement);
-
-//        db.execSQL("CREATE TABLE IF NOT EXISTS moto (id NUMERIC PRIMARY KEY AUTOINCREMENT, " +
-//                "user_id NUMERIC, speed INTEGER, latitude VARCHAR, longitude VARCHAR, altitude VARCHAR)");
-        // добавление начальных данных
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS moto");
-        db.execSQL("DROP TABLE IF EXISTS user");
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MOTO);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
         onCreate(db);
         db.close();
     }
 
+    //добавление мотоциклиста
     public boolean addOne(Moto1 moto) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
-        cv.put("id", moto.getId());
-        cv.put("user_id", moto.getUser().getId());
-        cv.put("speed", moto.getSpeed());
-        cv.put("latitude", moto.getLatitude());
-        cv.put("longitude", moto.getLongitude());
-        cv.put("altitude", moto.getAltitude());
+        cv.put(COLUMN_ID, moto.getId());
+        cv.put(COLUMN_USER_ID, moto.getUser().getId());
+        cv.put(COLUMN_SPEED, moto.getSpeed());
+        cv.put(COLUMN_LAT, moto.getLatitude());
+        cv.put(COLUMN_LON, moto.getLongitude());
+        cv.put(COLUMN_ALT, moto.getAltitude());
 
-        long insert = db.insert("moto", null, cv);
+        long insert = db.insert(TABLE_MOTO, null, cv);
 
         db.close();
         return insert != -1;
     }
 
+    //добавление юзера
     public boolean addOne(User user){
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
-        cv.put("id", user.getId());
-        cv.put("name", user.getName());
-        cv.put("nickname", user.getNickname());
-        cv.put("email", user.getEmail());
-        cv.put("status", user.getStatus());
+        cv.put(COLUMN_ID, user.getId());
+        cv.put(COLUMN_NAME, user.getName());
+        cv.put(COLUMN_NICKNAME, user.getNickname());
+        cv.put(COLUMN_EMAIL, user.getEmail());
+        cv.put(COLUMN_STATUS, user.getStatus());
 
-        long insert = db.insert("user", null, cv);
+        long insert = db.insert(TABLE_USER, null, cv);
 
         db.close();
         return insert != -1;
     }
 
+    //получение всех мотоциклистов
     public List<Moto1> getAllMoto() {
 
-        //dropTableMoto();
         List<Moto1> list = new ArrayList<>();
 
-        String query = "SELECT * FROM moto";
+        String query = "SELECT * FROM " + TABLE_MOTO;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
@@ -104,7 +108,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
             do{
                 long id = cursor.getLong(0);
-                //long user_id = cursor.getLong(1);
                 int speed = cursor.getInt(2);
                 double latitude = cursor.getDouble(3);
                 double longitude = cursor.getDouble(4);
@@ -113,7 +116,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 Moto1 moto = new Moto1(id, null, speed, latitude, longitude, altitude);
                 list.add(moto);
                 Log.d("DB_ADD_MOTO", "true");
-                Log.d("DB_ADD_MOTO", moto.toString());
             } while (cursor.moveToNext());
 
         } else {
@@ -125,87 +127,23 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return list;
     }
 
+    //пересоздание таблицы мотоциклов
     public void dropTableMoto() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DROP TABLE moto");
-        String createTableMotoStatement = "CREATE TABLE moto (id NUMERIC, " +
-                "user_id NUMERIC, speed INTEGER, latitude VARCHAR, longitude VARCHAR, altitude VARCHAR)";
+        db.execSQL("DROP TABLE " + TABLE_MOTO);
+        String createTableMotoStatement = "CREATE TABLE IF NOT EXISTS " + TABLE_MOTO +
+                " (" + COLUMN_ID + " NUMERIC, " + COLUMN_USER_ID + " NUMERIC, " + COLUMN_SPEED + " INTEGER, " +
+                COLUMN_LAT + " VARCHAR, " + COLUMN_LON + " VARCHAR, " + COLUMN_ALT + " VARCHAR)";
         db.execSQL(createTableMotoStatement);
     }
 
+    //пересоздание таблицы юзеров
     public void dropTableUser() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DROP TABLE user");
-        String createTableUserStatement = "CREATE TABLE user (id NUMERIC, " +
-                "name VARCHAR, nickname VARCHAR, email VARCHAR, status VARCHAR)";
+        db.execSQL("DROP TABLE " + TABLE_USER);
+        String createTableUserStatement = "CREATE TABLE IF NOT EXISTS " + TABLE_USER + " (" + COLUMN_ID + " NUMERIC, " + COLUMN_NAME + " VARCHAR, "
+                + COLUMN_NICKNAME + " VARCHAR, " + COLUMN_EMAIL + " VARCHAR, " + COLUMN_STATUS + " VARCHAR)";
         db.execSQL(createTableUserStatement);
-    }
-
-    public List<User> getAllUser() {
-
-        List<User> list = new ArrayList<>();
-
-        String query = "SELECT * FROM user";
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-
-        if (cursor.moveToFirst()) {
-
-            do{
-                long id = cursor.getLong(0);
-                String name = cursor.getString(1);
-                String nickname = cursor.getString(2);
-                String email = cursor.getString(3);
-                String status = cursor.getString(4);
-
-
-                User user = new User(id, name, nickname, email, status);
-                list.add(user);
-                Log.d("DB_ADD_USER", "true");
-                Log.d("DB_ADD_USER", user.toString());
-            } while (cursor.moveToNext());
-
-        } else {
-            Log.d("DB_ADD_USER", "false");
-        }
-
-        cursor.close();
-        db.close();
-        return list;
-    }
-
-    public User getUserById(long id){
-
-        String query = "SELECT name, nickname, email, status FROM user WHERE id = " + id;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        User user = null;
-
-        if (cursor.moveToFirst()){
-            if (cursor.moveToFirst()) {
-                do{
-                    String name = cursor.getString(0);
-                    String nickname = cursor.getString(1);
-                    String email = cursor.getString(2);
-                    String status = cursor.getString(3);
-
-
-                    user = new User(id, name, nickname, email, status);
-                    Log.d("DB_ADD_USER", "true");
-                    Log.d("DB_ADD_USER", user.toString());
-                } while (cursor.moveToNext());
-
-            } else {
-                Log.d("DB_ADD_USER", "false");
-            }
-        }
-
-        return user;
-    }
-
-    public int getSizeMoto(){
-        List<Moto1> list = getAllMoto();
-        return list.size();
     }
 
 }

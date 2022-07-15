@@ -1,17 +1,13 @@
 package com.example.project_map_curr_location.rest;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -20,11 +16,9 @@ import com.example.project_map_curr_location.database.DataBaseHelper;
 import com.example.project_map_curr_location.domain.User;
 import com.example.project_map_curr_location.domain.mapper.UserMapper;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,25 +27,16 @@ public class UserApiVolley implements UserApi{
     public static final String API_TEST = "API_TEST";
     private final Context context;
     public static final String BASE_URL = "http://78.40.217.59:2022";
-    private Response.ErrorListener errorListener;
-    private ArrayList<User> arrayList;
+    private final Response.ErrorListener errorListener;
 
     private DataBaseHelper dataBaseHelper;
-    private SQLiteDatabase db;
 
     private RequestQueue requestQueue;
 
     public UserApiVolley(Context context) {
         this.context = context;
 
-        errorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(API_TEST, error.toString());
-                Toast.makeText(context, "Нет подключения к Интернету, \nданные не актуальны", Toast.LENGTH_SHORT).show();
-            }
-        };
-        arrayList = new ArrayList<>();
+        errorListener = error -> Log.d(API_TEST, error.toString());
     }
 
     @Override
@@ -69,26 +54,21 @@ public class UserApiVolley implements UserApi{
                 url,
                 null,
 
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
+                response -> {
 
-                        dataBaseHelper.dropTableUser();
-                        try {
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject jsonObject = response.getJSONObject(i);
-                                User user = UserMapper.userFromJson(jsonObject);
+                    dataBaseHelper.dropTableUser();
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject jsonObject = response.getJSONObject(i);
+                            User user = UserMapper.userFromJson(jsonObject);
 
-                                if (user.getId() == ((MainActivity) context).loadDataInt("userId")){
-                                    boolean success = dataBaseHelper.addOne(user);
-                                    Log.d("API_TEST_VOLLEY", String.valueOf(success));
-                                }
+                            if (user.getId() == ((MainActivity) context).loadDataInt("userId")){
+                                boolean success = dataBaseHelper.addOne(user);
+                                Log.d("API_TEST_VOLLEY", String.valueOf(success));
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
-
-                        Log.d(API_TEST, arrayList.toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
 
@@ -111,21 +91,18 @@ public class UserApiVolley implements UserApi{
                 Request.Method.POST,
                 url,
 
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        getNewId();
-                        fillUser();
-                        Log.d("API_TEST_ADD_USER", response);
-                    }
+                response -> {
+                    getNewId();
+                    fillUser();
+                    Log.d("API_TEST_ADD_USER", response);
                 },
 
                 errorListener
         )
         {
-            @Nullable
+            @NonNull
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+            protected Map<String, String> getParams() {
 
                 Map<String, String> params = new HashMap<>();
 
@@ -154,17 +131,12 @@ public class UserApiVolley implements UserApi{
         StringRequest stringRequest = new StringRequest(
                 Request.Method.PUT,
                 url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        fillUser();
-                    }
-                },
+                response -> fillUser(),
                 errorListener
         ){
-            @Nullable
+            @NonNull
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
+            protected Map<String, String> getParams() {
 
                 Map<String, String> params = new HashMap<>();
                 params.put("id", String.valueOf(id));
@@ -192,12 +164,9 @@ public class UserApiVolley implements UserApi{
                 Request.Method.GET,
                 url,
 
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        ((MainActivity) context).saveDataInt("userId", Integer.valueOf(response));
-                        Log.d(API_TEST, response);
-                    }
+                response -> {
+                    ((MainActivity) context).saveDataInt("userId", Integer.parseInt(response));
+                    Log.d(API_TEST, response);
                 },
 
                 errorListener

@@ -56,8 +56,11 @@
     <string name="lastMotoName">lastMotoName</string>
     <string name="userNickname">userNickname</string>
     <string name="userLogged">userLogged</string>
-
-
+    <string name="delete_placemark">DELETE_PLACEMARK</string>
+    <string name="kmh"> км/ч</string>
+    <string name="m"> м</string>
+    <string name="input_nickname">Введите свой никнейм</string>
+    <string name="no_connection">Нет подключения к Интернету, \nданные не актуальны</string>
 
 
 </resources>

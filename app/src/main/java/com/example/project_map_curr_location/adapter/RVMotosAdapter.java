@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.project_map_curr_location.MainActivity;
@@ -22,32 +21,18 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
 
     private Context context;
     private List<Moto1> motorcycleList;
-    private LayoutInflater inflater;
-//
-//    private DataBaseHelper dataBaseHelper;
-//    private SQLiteDatabase db;
-//    private Cursor cursor;
-//    private SimpleCursorAdapter userAdapter;
+
 
     public RVMotosAdapter(Context context, List<Moto1> motorcycleList) {
         this.context = context;
         this.motorcycleList = motorcycleList;
     }
 
-    public RVMotosAdapter(List<Moto1> motorcycleArrayList) {
-        this.motorcycleList = motorcycleArrayList;
-    }
-
-    public RVMotosAdapter(Context context) {
-        this.context = context;
-    }
-
-    public class RVMotosHolder extends RecyclerView.ViewHolder {
+    public static class RVMotosHolder extends RecyclerView.ViewHolder {
 
         private TextView userName;
         private TextView userDistance;
         private TextView userSpeed;
-        private AppCompatButton userShowOnMap;
 
         public RVMotosHolder(@NonNull View itemView) {
             super(itemView);
@@ -55,10 +40,7 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
             userName = itemView.findViewById(R.id.userName);
             userDistance = itemView.findViewById(R.id.userDistance);
             userSpeed = itemView.findViewById(R.id.userSpeed);
-            //userShowOnMap = itemView.findViewById(R.id.userShowOnMap);
         }
-
-
     }
 
     @NonNull
@@ -80,46 +62,18 @@ public class RVMotosAdapter extends RecyclerView.Adapter<RVMotosAdapter.RVMotosH
         Moto1 moto = motorcycleList.get(position);
 
         new MotoApiVolley(context).getNameByMoto(moto.getId());
-        holder.userName.setText(((MainActivity) context).loadDataString("lastMotoName"));
-
         new MotoApiVolley(context).getNameByMoto(moto.getId());
-        holder.userName.setText(((MainActivity) context).loadDataString("lastMotoName"));
-
-        holder.userSpeed.setText(String.valueOf(moto.getSpeed()) + " км/ч");
-
-        //new MotoApiVolley(context).getDistanceByMotoId(1);
-
-        float distance = (float) Math.acos(Math.sin(moto.getLatitude()) * Math.sin(((MainActivity) context).loadDataFloat("actualCameraPositionLat"))
-                + Math.cos(moto.getLatitude()) * Math.cos(((MainActivity) context).loadDataFloat("actualCameraPositionLat"))
-                * Math.cos(moto.getLongitude() - Math.cos(((MainActivity) context).loadDataFloat("actualCameraPositionLon"))));
-
+        holder.userName.setText(((MainActivity) context).loadDataString(context.getString(R.string.lastMotoName)));
+        holder.userSpeed.setText(moto.getSpeed() + " " + context.getString(R.string.kmh));
 
         holder.userDistance.setText(String.valueOf( ((int)
                 calculateDistance(moto.getLatitude(), moto.getLongitude(),
-                ((MainActivity) context).loadDataFloat("actualCameraPositionLat"),
-                ((MainActivity) context).loadDataFloat("actualCameraPositionLon")))
-        + " м"));
-        //((RVMotosHolder) holder).userDistance.setText((int) moto.getId());
+                ((MainActivity) context).loadDataFloat(context.getString(R.string.actualCameraPositionLat)),
+                ((MainActivity) context).loadDataFloat(context.getString(R.string.actualCameraPositionLon)))  + " " + context.getString(R.string.m))));
 
-
-//        String name = motorcycleList.get(position).getUser().getName();
-//        holder.userName.setText(name);
-
-//        String distance = motorcycleList.get(position)
-//        holder.userDistance.setText();
-
-//        holder.userShowOnMap.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                ((MainActivity) context).saveDataBoolean("map_animation", true);
-////                Toast.makeText(context, String.valueOf(position), Toast.LENGTH_SHORT).show();
-//                ((MainActivity) context).loadMapInt(position);
-//
-//
-//            }
-//        });
     }
 
+    //метод по определению расстояния от устройства до мотоциклиста
     private double calculateDistance(double Alat, double Alon, float Blat, float Blon) {
 
         final long EARTH_RADIUS = 6372795;

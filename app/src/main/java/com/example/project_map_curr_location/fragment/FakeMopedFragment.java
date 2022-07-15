@@ -18,8 +18,6 @@ import com.example.project_map_curr_location.R;
 
 public class FakeMopedFragment extends Fragment {
 
-    private TextView tv_fakeMotos, tv_fakeMotosDesc;
-    private AppCompatButton btn_goToSettings;
     private Context context;
 
     @Override
@@ -40,18 +38,13 @@ public class FakeMopedFragment extends Fragment {
 
         context = view.getContext();
 
-        tv_fakeMotos = view.findViewById(R.id.tv_fakeMotos);
-        tv_fakeMotosDesc = view.findViewById(R.id.tv_fakeMotosDesc);
-        btn_goToSettings = view.findViewById(R.id.btn_goToSettings);
+        TextView tv_fakeMotos = view.findViewById(R.id.tv_fakeMotos);
+        TextView tv_fakeMotosDesc = view.findViewById(R.id.tv_fakeMotosDesc);
+        AppCompatButton btn_goToSettings = view.findViewById(R.id.btn_goToSettings);
 
         tv_fakeMotos.setText(getText(R.string.fakeMotos));
         tv_fakeMotosDesc.setText(getText(R.string.fakeMotosDesc));
 
-        btn_goToSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity) context).loadSettings();
-            }
-        });
+        btn_goToSettings.setOnClickListener(view1 -> ((MainActivity) context).loadSettings());
     }
 }
